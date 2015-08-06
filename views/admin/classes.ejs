@@ -1,0 +1,25 @@
+<div class="panel panel-default scrollable">
+    <table class="table table-hover table-striped">
+        <thead>
+            <tr>
+                <th>Teacher</th>
+                <th>Name</th>
+                <th>Period</th>
+            </tr>
+        </thead>
+        <tbody>
+            <% for(var c = 0; c < classes.length; c++) { %>
+            <tr data-href=<%= "/user/classes/" + classes[c].id %>>
+                <td><%= classes[c].teacher_name %></td>
+                <td><%= classes[c].name %></td>
+                <td><%= classes[c].period %></td>
+            </tr>
+            </a>
+            <% } %>
+        </tbody>
+    </table>
+</div>
+
+<button style="float: right" type="button" class="btn btn-default btn-sm" data-href="/user/classes/edit">
+    <span class="glyphicon glyphicon-pencil"></span> Edit
+</button>

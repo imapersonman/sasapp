@@ -1,0 +1,81 @@
+<script src="/static/js/edit_class.js"></script>
+
+<div class="row">
+    <div class="col-md-4">
+        <!-- Next: Bring back teacher selection combobox. -->
+        <strong>Teacher:</strong>
+        <select id="teacher-select">
+            <% if (_class.teacher_id) { %>
+                <option value=<%- "'" + _class.teacher_id + "'" %>><%= _class.teacher_name %></option>
+            <% } else { %>
+                <option></option>
+            <% } %>
+            <% for (var t = 0; t < all_teachers.length; t++) { %>
+                <option value=<%- "'" + all_teachers[t].id + "'" %>><%= all_teachers[t].name %></option>
+            <% } %>
+        </select>
+        <button onclick=<%- "'changeTeacher(" + _class.id + ")'" %> style="float: right" type="button" class="btn btn-default btn-sm">Change Teacher</button><br />
+        <strong>Email:</strong> <%= _class.email %><br />
+        <strong>Name:</strong> <%= _class.name %><br />
+        <strong>Room Number:</strong> <%= _class.room_num %><br />
+        <strong>Period:</strong> <%= _class.period %><br />
+    </div>
+</div>
+
+<div class="col-md-6">
+    <h3>Students in Class</h3>
+    <div class="panel panel-default scrollable">
+        <table class="table table-hover table-striped">
+            <thead>
+                <tr>
+                    <th>Selected</th>
+                    <th>Name</th>
+                    <th>Email</th>
+                </tr>
+            </thead>
+            <tbody id="class-students">
+                <% for(var s = 0; s < students.length; s++) { %>
+                    <tr user_id=<%- "'" + students[s].id + "'" %>>
+                        <td><input type="checkbox" value=""></td>
+                        <td><%= students[s].name %></td>
+                        <td><%= students[s].email %></td>
+                    </tr>
+                    <% } %>
+            </tbody>
+        </table>
+    </div>
+
+    <button onclick=<%- "'removeStudents(" + _class.id + ")'" %> type="button" class="btn btn-default btn-sm" >
+        <span class="glyphicon glyphicon-minus"></span> Remove Selected Students
+    </button>
+
+</div>
+
+<div class="col-md-6">
+    <h3>Add Students</h3>
+    <div class="panel panel-default scrollable">
+        <table class="table table-hover table-striped">
+            <thead>
+                <tr>
+                    <th>Selected</th>
+                    <th>Name</th>
+                    <th>Email</th>
+                </tr>
+            </thead>
+            <tbody id="all-students">
+                <% for(var s = 0; s < all_students.length; s++) { %>
+                    <tr user_id=<%- "'" + all_students[s].id + "'" %>>
+                        <td><input type="checkbox" value=""></td>
+                        <td><%= all_students[s].name %></td>
+                        <td><%= all_students[s].email %></td>
+                    </tr>
+                    <% } %>
+            </tbody>
+        </table>
+    </div>
+
+    <button onclick=<%- "'addStudents(" + _class.id + ")'" %> type="button" class="btn btn-default btn-sm" >
+        <span class="glyphicon glyphicon-plus"></span> Add Selected Students
+    </button>
+
+</div>

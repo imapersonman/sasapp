@@ -1,0 +1,22 @@
+<html lang="en">
+    <head>
+        <title>Highlander Home - Login</title>
+    </head>
+    <body>
+        <ul>
+            <li><a href="/">Home</a></li>
+        </ul>
+        
+        <% if(message.length > 0) { %>
+            <div><%= message %></div>
+        <% } %>
+            
+        <form action="/login" method="post">
+            <label>Email</label>
+            <input type="text" name="email">
+            <label>Password</label>
+            <input type="password" name="password">
+            <input type="submit" value="Submit">
+        </form>
+    </body>
+</html>

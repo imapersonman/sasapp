@@ -1,0 +1,17 @@
+.scrollable {
+    height: 400px;
+    overflow: scroll;
+}
+
+.clickable-row {
+    cursor: pointer;
+}
+
+.btn:focus {
+    outline: none;
+}
+
+.container-fluid {
+    margin-top: 10px;
+    margin-bottom: 10px;
+}

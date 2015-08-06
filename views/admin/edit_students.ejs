@@ -1,0 +1,35 @@
+<script src="/static/js/edit_students.js"></script>
+<script>setInitialRowSize(<%- students.length - 1 %>)</script>
+<div class="panel panel-default scrollable">
+    <table class="table table-striped table-condensed table-hover">
+        <thead>
+            <tr>
+                <th>Name</th>
+                <th>Email</th>
+                <th>SAS Room Number</th>
+            </tr>
+        </thead>
+        <tbody class="editable-list">
+            <% for(var s = 0; s < students.length; s++) { %>
+            <tr user_id=<%= students[s].id %> row_index=<%= s %>>
+                <td><input class="form-control" type="text" value=<%- "'" + students[s].name + "'" %>></td>
+                <td><input class="form-control" type="text" value=<%= students[s].email %>></td>
+                <td><%= students[s].room_num %></td>
+                <td>
+                    <button onclick="removeRow()" style="float: right" type="button" class="btn btn-default btn-sm">
+                        <span class="glyphicon glyphicon-minus"></span> Remove
+                    </button>
+                </td>
+            </tr>
+            <% } %>
+        </tbody>
+    </table>
+</div>
+
+<button onclick="addRow()" type="button" class="btn btn-default btn-sm">
+    <span class="glyphicon glyphicon-plus"></span> Add
+</button>
+
+<button style="float: right" onclick="sendStudentChanges()" type="button" class="btn btn-success btn-sm" >
+    <span class="glyphicon glyphicon-check"></span> Done
+</button>

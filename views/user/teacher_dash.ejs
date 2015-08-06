@@ -1,0 +1,18 @@
+<script src="/static/js/teacher_dash.js"></script>
+<script>getStudents(<%= user.id %>)</script>
+
+<button onclick="sendRanks()" style="float: right" type="button" class="btn btn-default btn-sm">Request SAS Students</button>
+<h4>Students</h4>
+<div class="panel panel-default scrollable">
+    <table class="table table-hover table-striped">
+        <thead>
+            <tr>
+                <th>Request for SAS</th>
+                <th>Name</th>
+                <th>Email</th>
+            </tr>
+        </thead>
+        <tbody id="student-list">
+        </tbody>
+    </table>
+</div>

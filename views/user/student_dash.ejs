@@ -1,0 +1,26 @@
+<script src="/static/js/student_dash.js"></script>
+<script>getTeachers(<%= user.id %>)</script>
+<script>getRankings(<%= user.id %>)</script>
+
+<button onclick="sendRanks()" style="float: right" type="button" class="btn btn-default btn-sm">Submit SAS Ranks</button>
+<h4>Past Requests:</h4>
+<div class="row">
+    <div class="col-md-4">
+        <ul id="rank-list"></ul>
+    </div>
+</div>
+
+<div class="panel panel-default scrollable">
+    <table class="table table-hover table-striped">
+        <thead>
+            <tr>
+                <th>Rank</th>
+                <th>Teacher</th>
+                <th>Email</th>
+                <th>Room Number</th>
+            </tr>
+        </thead>
+        <tbody id="teacher-list">
+        </tbody>
+    </table>
+</div>

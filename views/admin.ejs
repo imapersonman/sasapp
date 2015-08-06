@@ -1,0 +1,39 @@
+<html lang="en">
+    <head>
+        <title>Highlander Home - <%= title %></title>
+        <link rel="stylesheet" type="text/css" href="/static/bootstrap/css/bootstrap.css">
+        <link rel="stylesheet" type="text/css" href="/static/bootstrap-combobox/css/bootstrap-combobox.css">
+        <link rel="stylesheet" type="text/css" href="/static/css/main.css">
+
+        <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>
+        <script src="/static/bootstrap/js/bootstrap.min.js"></script>
+        <script src="/static/bootstrap-combobox/js/bootstrap-combobox.js"></script>
+        <script src="/static/bootstrap-select/js/bootstrap-select.js"></script>
+        <script src="/static/js/main.js"></script>
+    </head>
+    <body>
+        <div class="container-fluid">
+
+            <nav class="navbar navbar-default">
+                <div class="navbar-header">
+                    <a class="navbar-brand" href="/user">Admin Dashboard</a>
+                </div>
+                <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
+                    <ul class="nav navbar-nav">
+                        <li class="link"><a href="/user/classes">Classes</a></li>
+                        <li class="link"><a href="/user/students">Students</a></li>
+                        <li class="link"><a href="/user/teachers">Teachers</a></li>
+                    </ul>
+                    <ul class="nav navbar-nav navbar-right">
+                        <li class="link"><a href="/logout">Sign Out</a></li>
+                    </ul>
+                </div>
+            </nav>
+
+            <h1><%= title %>&ensp;<img src="/static/images/ajax-loader.gif" width="20" id="loading-indicator" style="display:none" /></h1>
+            <%- include("admin/" + page + ".ejs") %>
+
+        </div>
+
+    </body>
+</html>
