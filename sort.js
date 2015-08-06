@@ -15,9 +15,40 @@ var weights = {
 
 connection.connect();
 
-resolveTeacherConflicts(function() {
+function setWeights(next) {
+    var query = "SELECT "
+                + "sas_requests.id AS id, "
+		+ "sas_requests.timestamp AS timestamp, "
+		+ "sas_requests.rank AS rank, "
+                + "student_classes.student_id AS student_id "
+                + "FROM sas_requests "
+                + "JOIN student_classes ON sas_requests.user_class_id = student_classes.id "
+    
+    connection.query(query, function(error, rows, fields) {
+        processError(error, query);
+	var weights = [];
+	var request_obj = { id: null, weight: null };
+	for (var r = 0; r < rows.length; r++) {
+	    var request = rows[r];
+	    var id = request.id;
+	    // Request object:
+	    //     timestamp : MySQL TIMESTAMP,
+	    //     rank      : int
+	    // The request object is subject to change in the future.
+	    var weight = calculateWeightForRequest(request);
+	    request_obj.id = id;
+	    request_obj.weight = weight;
+	    weights.push(request_obj);
+	}
+	next(weights);
+    }
+}
 
-});
+function sortIntoClasses(weights) {
+    for (var w = 0; w < weights.length; w++) {
+	// I'll do this tomorrow.  Time to commit.
+    }
+}
 
 function resolveTeacherConflicts(next) {
     var query = "SELECT "
@@ -66,6 +97,16 @@ function log(query, type) {
     console.log(query);
     console.log("=============END " + type + "=============");
     console.log();
+}
+
+function calculateWeightForRequest(request) {
+    var timestamp = request.timestamp.getTime();
+    var rank = request.rank;
+    var now = new Date();
+    var time_diff = now - timestamp;
+    // All I could come up with.  I'm running out of time stop
+    // judging me.
+    return time_diff / rank;
 }
 
 function remove(query_object, callback) {
