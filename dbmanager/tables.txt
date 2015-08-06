@@ -13,7 +13,7 @@ CREATE TABLE `classes` (
 	`id` INT NOT NULL AUTO_INCREMENT,
 	`name` varchar(128) NOT NULL,
 	`teacher_id` INT,
-	`room_num` varchar(8) NOT NULL,
+	`room_num` varchar(8),
 	`period` INT NOT NULL,
 	PRIMARY KEY (`id`)
 );
