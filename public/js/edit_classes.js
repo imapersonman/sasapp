@@ -1,4 +1,5 @@
 $(document).ready(function() {
+
     $(document).ajaxComplete(function(event, request, settings) {
         $('#loading-indicator').hide();
     });
@@ -98,7 +99,7 @@ function addRow() {
         + "<td><input class=\"form-control\" type=\"text\" value=\"Name\"></td>"
         + "<td><input class=\"form-control\" type=\"text\" value=\"Period\"></td>"
         + "<td>"
-        + "<button onclick=\"removeRow()\" style=\"float: right\" type=\"button\" class=\"btn btn-default btn-sm\">"
+        + "<button onclick=\"removeRow(this)\" style=\"float: right\" type=\"button\" class=\"btn btn-default btn-sm\">"
         + "<span class=\"glyphicon glyphicon-minus\"></span> Remove"
         + "</button>"
         + "</td>"
@@ -106,9 +107,9 @@ function addRow() {
     );
 }
 
-function removeRow() {
-    var row = parseInt($(event.target).parentsUntil("tbody").last().attr("row_index"));
-    var class_id = $(event.target).parentsUntil("tbody").last().attr("class_id");
+function removeRow(target) {
+    var row = parseInt($(target).parentsUntil("tbody").last().attr("row_index"));
+    var class_id = $(target).parentsUntil("tbody").last().attr("class_id");
     var rowIndex = added.indexOf(row);
     if (class_id == "null") {
         console.log("row_index: " + rowIndex);
@@ -117,7 +118,7 @@ function removeRow() {
         removed.push(parseInt(class_id));
     }
     console.log(removed);
-    $(event.target).parentsUntil("tbody").last().remove();
+    $(target).parentsUntil("tbody").last().remove();
 }
 
 var rowSize = 0;

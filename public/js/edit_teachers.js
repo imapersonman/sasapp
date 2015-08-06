@@ -113,7 +113,8 @@ function addRow() {
     );
 }
 
-function removeRow() {
+function removeRow(event) {
+    // Because firefox feels like being silly.
     var row = parseInt($(event.target).parentsUntil("tbody").last().attr("row_index"));
     var user_id = $(event.target).parentsUntil("tbody").last().attr("user_id");
     var rowIndex = added.indexOf(row);
