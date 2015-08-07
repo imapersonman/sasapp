@@ -52,11 +52,13 @@ function sendClassChanges() {
         var _class = rows[c];
 
         var name = $($($(_class).children()[1]).children()[0]).val().trim();
-        var period = $($($(_class).children()[2]).children()[0]).val().trim();
+        var room_num = $($($(_class).children()[2]).children()[0]).val().trim();
+        var period = $($($(_class).children()[3]).children()[0]).val().trim();
 
         classList.push({
             name: name,
-            period: period
+            period: period,
+            room_num: room_num
         });
     }
 
@@ -97,6 +99,7 @@ function addRow() {
         + "<tr class_id=null row_index=" + rowSize + ">"
         + "<td>Teacher</td>"
         + "<td><input class=\"form-control\" type=\"text\" value=\"Name\"></td>"
+        + "<td><input class=\"form-control\" type=\"text\" value=\"Room Number\"></td>"
         + "<td><input class=\"form-control\" type=\"text\" value=\"Period\"></td>"
         + "<td>"
         + "<button onclick=\"removeRow(this)\" style=\"float: right\" type=\"button\" class=\"btn btn-default btn-sm\">"

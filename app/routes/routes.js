@@ -1,4 +1,4 @@
-var model = require("../new_model");
+var model = require("../ideal_model");
 
 module.exports = function(app, passport) {
 
@@ -17,6 +17,7 @@ module.exports = function(app, passport) {
             object.page = "dashboard";
             page_type = "admin";
         } else {
+            console.log("I don't get it");
             page_type = "user";
             if (type == "student") {
                 object.title = "Student Dashboard";

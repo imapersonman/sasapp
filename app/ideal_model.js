@@ -2,14 +2,23 @@ var mysql = require("mysql");
 var config = require("../config/database");
 config.connectionLimit = 20;
 var pool = mysql.createPool(config);
-var helper = require("./model_helpers")(pool);
+var helper = require("./model_helpers");
 
 // Currently not being used. 
 exports.findUserForGoogle = function(google_id, callback) {
     var esc_google_id = mysql.escape(google_id);
-    var query = "SELECT DISTINCT * "
-                + "FROM users "
-                + "WHERE google_id=" + esc_google_id;
+    var query = "SELECT users.name AS name, "
+		+ "users.email AS email, "
+		+ "users.google_id AS google_id, "
+		+ "users.token AS token, "
+		+ "user_info.type AS type, "
+		+ "schools.name AS school_name, "
+		+ "schools.sas_name AS sas_name "
+        + "FROM users "
+		+ "JOIN user_info ON user_info.user_id = users.id "
+		+ "JOIN schools ON user_info.school_id = schools.id "
+        + "WHERE google_id=" + esc_google_id;
+		+ "LIMIT 1";
 
     pool.getConnection(function(error, connection) {
         if (error) callback(error, null);
@@ -41,9 +50,12 @@ exports.findUserForGoogle = function(google_id, callback) {
  */
 exports.findUserByEmail = function(email, callback) {
     var esc_email = mysql.escape(email);
-    var query = "SELECT * "
-                + "FROM users "
-                + "WHERE email = " + esc_email + " "
+    var query = "SELECT users.name AS name, "
+		+ "users.email AS email, "
+		+ "users.google_id AS google_id, "
+		+ "users.token AS token "
+        + "FROM users "
+        + "WHERE email = " + esc_email + " "
 		+ "LIMIT 1";
 
     pool.getConnection(function(error, connection) {
@@ -51,7 +63,7 @@ exports.findUserByEmail = function(email, callback) {
         connection.query(query, function(error, rows, fields) {
             if (error) {
                 console.log(error);
-                logQuery(query);
+                helper.logQuery(query);
                 callback(error, null);
                 return;
             }
@@ -144,7 +156,6 @@ exports.firstLogin = function(google_id, token, email, callback) {
                 user.google_id = google_id;
                 user.token = token;
                 user.email = email;
-                callback(null, user);
             }
             connection.release();
         });
@@ -167,7 +178,7 @@ exports.findAllUsers = function(callback) {
     };
     var addition = "JOIN user_info ON users.id = user_info.user_id "
                     + "LEFT JOIN sas_classes ON user_info.sas_class_id = sas_classes.id";
-    helper.find(query_object, "", callback)
+    helper.find(query_object, "", callback, pool)
 };
 
 /*
@@ -187,7 +198,7 @@ exports.findStudentsForClass = function(class_id, callback) {
     var addition = "JOIN users ON student_classes.student_id = users.id "
                     + "WHERE student_classes.class_id = "
                     + mysql.escape(class_id);
-    helper.find(query_object, addition, callback);
+    helper.find(query_object, addition, callback, pool);
 };
 
 /*
@@ -209,7 +220,7 @@ exports.findStudentsForTeacher = function(teacher_id, callback) {
                     + "WHERE classes.teacher_id = " + mysql.escape(teacher_id) + " "
                     + "GROUP BY users.id";
 
-    helper.find(query_object, addition, callback);
+    helper.find(query_object, addition, callback, pool);
 };
 
 /*
@@ -231,7 +242,7 @@ exports.findTeachersForStudent = function(student_id, callback) {
                     + "JOIN user_info ON users.id = user_info.user_id "
                     + "JOIN sas_classes ON user_info.sas_class_id = sas_classes.id";
 
-    helper.find(query_object, addition, callback);
+    helper.find(query_object, addition, callback, pool);
 };
 
 /*
@@ -256,7 +267,7 @@ exports.findRankingsForStudent = function(student_id, callback) {
                     + "JOIN users ON user_info.user_id = users.id "
                     + "WHERE sas_requests.student_id = " + mysql.escape(student_id);
 
-    helper.find(query_object, addition, callback);
+    helper.find(query_object, addition, callback, pool);
 };
 
 /*
@@ -279,7 +290,7 @@ exports.findRankingsForTeacher = function(teacher_id, callback) {
                     + "JOIN users ON user_info.user_id = users.id AND user_info.type = \"teacher\" "
                     + "WHERE users.id = " + mysql.escape(teacher_id);
 
-    helper.find(query_object, addition, callback);
+    helper.find(query_object, addition, callback, pool);
 };
 
 /*
@@ -290,7 +301,7 @@ exports.findRankingsForTeacher = function(teacher_id, callback) {
  * 		function(users)
  */
 exports.findAllStudents = function(callback) {
-    helper.findAllUsersOfType("student", callback);
+    helper.findAllUsersOfType("student", callback, pool);
 };
 
 /*
@@ -301,7 +312,7 @@ exports.findAllStudents = function(callback) {
  * 		function(users)
  */
 exports.findAllTeachers = function(callback) {
-    helper.findAllUsersOfType("teacher", callback)
+    helper.findAllUsersOfType("teacher", callback, pool)
 };
 
 /*
@@ -375,7 +386,7 @@ exports.addUsers = function(added, callback) {
         table: "users",
         added: added
     };
-    helper.add(query_object, callback);
+    helper.add(query_object, callback, pool);
 };
 
 exports.addClasses = function(added, callback) {
@@ -384,7 +395,7 @@ exports.addClasses = function(added, callback) {
         table: "classes",
         added: added
     };
-    helper.add(query_object, callback)
+    helper.add(query_object, callback, pool);
 };
 
 // This needs to be re-written using 'helper.add()'.
@@ -464,7 +475,7 @@ exports.updateUsers = function(updates, callback) {
         table: "users",
         updates: updates
     };
-    helper.update(query_object, callback);
+    helper.update(query_object, callback, pool);
 };
 
 exports.updateClasses = function(updates, callback) {
@@ -473,7 +484,7 @@ exports.updateClasses = function(updates, callback) {
         table: "classes",
         updates: updates
     };
-    helper.update(query_object, callback);
+    helper.update(query_object, callback, pool);
 };
 
 // This needs to be re-written using 'helper.update()'.
@@ -523,5 +534,5 @@ exports.removeClasses = function(removed, callback) {
         removed: removed,
         table: "classes"
     };
-    helper.remove(query_object, callback);
+    helper.remove(query_object, callback, pool);
 };

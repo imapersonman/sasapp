@@ -4,6 +4,7 @@
             <tr>
                 <th>Teacher</th>
                 <th>Name</th>
+                <th>Room Number</th>
                 <th>Period</th>
             </tr>
         </thead>
@@ -12,6 +13,7 @@
             <tr data-href=<%= "/user/classes/" + classes[c].id %>>
                 <td><%= classes[c].teacher_name %></td>
                 <td><%= classes[c].name %></td>
+                <td><%= classes[c].room_num %></td>
                 <td><%= classes[c].period %></td>
             </tr>
             </a>
