@@ -1,6 +1,7 @@
-module.exports = function(pool);
+var mysql = require("mysql");
 
-function logQuery(query) {
+
+exports.logQuery = function(query) {
     console.log();
     console.log("==========QUERY==========");
     console.log(query);
@@ -8,19 +9,19 @@ function logQuery(query) {
     console.log();
 }
 
-exports.findAllUsersOfType = function(type, callback) {
+exports.findAllUsersOfType = function(type, callback, pool) {
     var query_object = {
         fields: ["users.id", "users.name", "users.email", "sas_classes.room_num"],
         table: "users"
     };
-    var addition = "JOIN user_info ON users.id = user_info.user_id "
-                    + "JOIN sas_classes ON user_info.sas_class_id = sas_classes.id "
+    var addition = "LEFT JOIN user_info ON users.id = user_info.user_id "
+                    + "LEFT JOIN sas_classes ON user_info.sas_class_id = sas_classes.id "
                     + "WHERE type=" + mysql.escape(type);
 
-    find(query_object, addition, callback);
+    exports.find(query_object, addition, callback, pool);
 };
 
-exports.find = function(query_object, addition, callback) {
+exports.find = function(query_object, addition, callback, pool) {
     var select_query = "SELECT ";
     var field_array = query_object.fields;
     if (field_array[0] == "*") {
@@ -48,7 +49,7 @@ exports.find = function(query_object, addition, callback) {
     });
 }
 
-exports.update = function(query_object, callback) {
+exports.update = function(query_object, callback, pool) {
     var query = "UPDATE " + query_object.table + " SET ";
     var columns = query_object.fields;
     var updates = query_object.updates;
@@ -98,7 +99,7 @@ exports.update = function(query_object, callback) {
     });
 }
 
-exports.add = function(query_object, callback) {
+exports.add = function(query_object, callback, pool) {
     var messages = [];
     var fields = query_object.fields;
     var field_query = "(";
@@ -132,7 +133,7 @@ exports.add = function(query_object, callback) {
         connection.query(query, function(error, rows, fields) {
             if (error) {
                 console.log(error);
-                log(query, "query");
+                exports.log(query, "query");
             }
             callback(messages);
             connection.release();
@@ -140,7 +141,7 @@ exports.add = function(query_object, callback) {
     });
 }
 
-exports.remove = function(query_object, callback) {
+exports.remove = function(query_object, callback, pool) {
     var messages = [];
     var query = "DELETE "
                 + "FROM " + query_object.table + " "
@@ -156,9 +157,9 @@ exports.remove = function(query_object, callback) {
     query = mysql.format(query, removed);
 
     pool.getConnection(function(error, connection) {
-        helper.processError(error);
+        exports.processError(error);
         connection.query(query, function(error, rows, fields) {
-            helper.processQueryError(error, query);
+            exports.processQueryError(error, query);
             callback(messages);
             connection.release();
         });

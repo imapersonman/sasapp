@@ -1,4 +1,4 @@
-var model = require("../new_model");
+var model = require("../ideal_model");
 
 module.exports = function(app, passport) {
 
@@ -17,6 +17,7 @@ module.exports = function(app, passport) {
             object.page = "dashboard";
             page_type = "admin";
         } else {
+            console.log("I don't get it");
             page_type = "user";
             if (type == "student") {
                 object.title = "Student Dashboard";
@@ -266,7 +267,7 @@ module.exports = function(app, passport) {
     app.post("/model/update/class/teacher", isLoggedIn, isAdmin, function(request, response) {
         var class_id = request.body.class_id;
         var teacher_id = request.body.teacher_id;
-        model.changeClassTeacher(class_id, teacher_id, function(messages) {
+        model.updateClassTeacher(class_id, teacher_id, function(messages) {
             response.end(JSON.stringify(messages));
         });
     });
