@@ -1,4 +1,5 @@
 $(document).ready(function() {
+
     $(document).ajaxComplete(function(event, request, settings) {
         $('#loading-indicator').hide();
     });
@@ -16,7 +17,7 @@ $(document).ready(function() {
                 if ($(this).parent().index() == 1) {
                     editedObject.name = new_value;
                 } else
-                // Class Room Number
+                // Room Number
                 if ($(this).parent().index() == 2) {
                     editedObject.room_num = new_value;
                 } else
@@ -84,8 +85,7 @@ function packageEditedClasses() {
         if (classes[class_id] == null) {
             classes[class_id] = {
                 name: null,
-                period: null,
-                room_num: null
+                period: null
             };
         }
         var property_key = Object.keys(edited[e])[1];
@@ -106,7 +106,7 @@ function addRow() {
         + "<td><input class=\"form-control\" type=\"text\" value=\"Room Number\"></td>"
         + "<td><input class=\"form-control\" type=\"text\" value=\"Period\"></td>"
         + "<td>"
-        + "<button onclick=\"removeRow()\" style=\"float: right\" type=\"button\" class=\"btn btn-default btn-sm\">"
+        + "<button onclick=\"removeRow(this)\" style=\"float: right\" type=\"button\" class=\"btn btn-default btn-sm\">"
         + "<span class=\"glyphicon glyphicon-minus\"></span> Remove"
         + "</button>"
         + "</td>"
@@ -114,9 +114,9 @@ function addRow() {
     );
 }
 
-function removeRow() {
-    var row = parseInt($(event.target).parentsUntil("tbody").last().attr("row_index"));
-    var class_id = $(event.target).parentsUntil("tbody").last().attr("class_id");
+function removeRow(target) {
+    var row = parseInt($(target).parentsUntil("tbody").last().attr("row_index"));
+    var class_id = $(target).parentsUntil("tbody").last().attr("class_id");
     var rowIndex = added.indexOf(row);
     if (class_id == "null") {
         console.log("row_index: " + rowIndex);
@@ -125,7 +125,7 @@ function removeRow() {
         removed.push(parseInt(class_id));
     }
     console.log(removed);
-    $(event.target).parentsUntil("tbody").last().remove();
+    $(target).parentsUntil("tbody").last().remove();
 }
 
 var rowSize = 0;

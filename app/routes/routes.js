@@ -266,7 +266,7 @@ module.exports = function(app, passport) {
     app.post("/model/update/class/teacher", isLoggedIn, isAdmin, function(request, response) {
         var class_id = request.body.class_id;
         var teacher_id = request.body.teacher_id;
-        model.changeClassTeacher(class_id, teacher_id, function(messages) {
+        model.updateClassTeacher(class_id, teacher_id, function(messages) {
             response.end(JSON.stringify(messages));
         });
     });

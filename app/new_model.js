@@ -11,7 +11,7 @@ exports.findUserForGoogle = function(google_id, callback) {
                 + "WHERE google_id=" + esc_google_id;
     connection.query(query, function(error, rows, fields) {
         if (error) {
-            console.log(error.code);
+            console.log(error);
             logQuery(query);
             callback(error, null);
             return
@@ -31,7 +31,7 @@ exports.findUserByEmail = function(email, callback) {
                 + "WHERE email=" + esc_email;
     connection.query(query, function(error, rows, fields) {
         if (error) {
-            console.log(error.code);
+            console.log(error);
             logQuery(query);
             callback(error, null);
             return;
@@ -57,7 +57,7 @@ exports.findUser = function(user_id, callback) {
                 + "WHERE id=" + esc_user_id;
     connection.query(query, function(error, rows, fields) {
         if (error) {
-            console.log(error.code);
+            console.log(error);
             logQuery(query);
             callback(error, null);
             return;
@@ -80,7 +80,7 @@ exports.firstLogin = function(google_id, token, email, callback) {
                 + " WHERE email=" + esc_email;
     connection.query(query, function(error, rows, fields) {
         if (error) {
-            console.log(error.code);
+            console.log(error);
             logQuery(query);
             callback(error, null);
         }else {
@@ -138,6 +138,7 @@ exports.findTeachersForStudent = function(student_id, callback) {
     var query = "SELECT "
                 + "users.name AS name, "
                 + "users.email AS email, "
+                + "student_classes.id AS st_id, "
                 + "users.room_num AS room_num "
                 + "FROM student_classes "
                 + "JOIN classes ON student_classes.class_id = classes.id "
@@ -342,6 +343,21 @@ exports.addClasses = function(added, callback) {
 };
 
 exports.removeClasses = function(removed, callback) {
+    var query = "DELETE FROM student_classes WHERE class_id = (";
+    for (var r = 0; r < removed.length; r++) {
+        query += "?";
+        if (r < removed.length - 1) query += ",";
+    }
+    query += ")";
+    connection.query(query, removed, function(error, rows, fields) {
+        var messages = [];
+        if (error) {
+            console.log(error);
+            logQuery(query);
+        }
+        callback(messages);
+    });
+
     var query_object = {
         removed: removed,
         table: "classes"
@@ -465,7 +481,7 @@ function update(query_object, callback) {
     connection.query(query, function(error, rows, fields) {
         var messages = [];
         if (error) {
-            console.log(error.code);
+            console.log(error);
             logQuery(query);
         }
         callback(messages);
@@ -526,7 +542,7 @@ function remove(query_object, callback) {
     query = mysql.format(query, removed);
     connection.query(query, function(error, rows, fields) {
         if (error) {
-            console.log(error.code);
+            console.log(error);
             logQuery(query);
         }
         callback(messages);
