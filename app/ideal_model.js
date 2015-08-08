@@ -11,12 +11,14 @@ exports.findUserForGoogle = function(google_id, callback) {
 		+ "users.email AS email, "
 		+ "users.google_id AS google_id, "
 		+ "users.token AS token, "
-		+ "user_info.type AS type, "
+		+ "users.type AS type, "
+		+ "sas_classes.room_num AS room_num, "
 		+ "schools.name AS school_name, "
 		+ "schools.sas_name AS sas_name "
         + "FROM users "
-		+ "JOIN user_info ON user_info.user_id = users.id "
-		+ "JOIN schools ON user_info.school_id = schools.id "
+		+ "LEFT JOIN user_info ON user_info.user_id = users.id "
+		+ "LEFT JOIN sas_classes ON sas_classes.id = user_info.sas_class_id "
+		+ "LEFT JOIN schools ON user_info.school_id = schools.id "
         + "WHERE google_id=" + esc_google_id;
 		+ "LIMIT 1";
 
@@ -25,7 +27,7 @@ exports.findUserForGoogle = function(google_id, callback) {
         connection.query(query, function(error, rows, fields) {
             if (error) {
                 console.log(error.code);
-                logQuery(query);
+                helper.log(query, "QUERY");
                 callback(error, null);
                 return;
             }
@@ -53,6 +55,7 @@ exports.findUserByEmail = function(email, callback) {
     var query = "SELECT users.name AS name, "
 		+ "users.email AS email, "
 		+ "users.google_id AS google_id, "
+        + "users.type AS type, "
 		+ "users.token AS token "
         + "FROM users "
         + "WHERE email = " + esc_email + " "
@@ -85,7 +88,7 @@ exports.findUserByEmail = function(email, callback) {
  * 		- users.email
  * 		- users.google_id
  * 		- users.token
- * 		- user_info.type (pointed to by the table users)
+ * 		- users.type
  *
  * 	I don't know what this function is called by.
  *
@@ -102,9 +105,8 @@ exports.findUser = function(user_id, callback) {
                 + "users.email AS email, "
                 + "users.google_id AS google_id, "
                 + "users.token AS token, "
-                + "user_info.type AS type "
+                + "users.type AS type "
                 + "FROM users "
-                + "JOIN user_info ON users.id = user_info.user_id "
                 + "WHERE id=" + mysql.escape(user_id);
 
     pool.getConnection(function(error, connection) {
@@ -173,7 +175,7 @@ exports.firstLogin = function(google_id, token, email, callback) {
  */
 exports.findAllUsers = function(callback) {
     var query_object = {
-        fields: ["users.id", "users.name", "users.email", "sas_classes.room_num", "user_info.type"],
+        fields: ["users.id", "users.name", "users.email", "sas_classes.room_num", "users.type"],
         table: "users"
     };
     var addition = "JOIN user_info ON users.id = user_info.user_id "
@@ -389,6 +391,32 @@ exports.addUsers = function(added, callback) {
     helper.add(query_object, callback, pool);
 };
 
+exports.addTeachers = function(added, callback) {
+    var user_query = "INSERT INTO users (name, email) VALUES ";
+    var info_query = "INSERT INTO user_info (sas_class_id) VALUES ";
+    for (var a = 0; a < added.length; a++) {
+        user_query += "(" + added[a].name + "," + added[a].email + ")";
+        // info_query += FINISH THIS PART WHEN YOU GET BACK
+        if (a < added.length - 1) {
+            user_query += ",";
+            info_query += ",";
+        }
+    }
+    pool.getConnection(function(error, connection) {
+        helper.processError(error);
+        connection.query(user_query, function(error, rows, fields) {
+            if (error) return connection.rollback(function() {});
+            connection.query(info_query, function(error, rows, field) {
+                if (error) return connection.rollback(function() {});
+                connection.commit(function(error) {
+                    if (error) return connection.rollback(function() {});
+                    console.log("Transaction Successful");
+                });
+            });
+        });
+    });
+};
+
 exports.addClasses = function(added, callback) {
     query_object = {
         fields: ["name", "room_num", "period"],
@@ -412,7 +440,7 @@ exports.addStudentsToClass = function(class_id, added, callback) {
             var messages = [];
             if (error) {
                 console.log(error);
-                logQuery(query);
+                helper.log(query, "QUERY");
             }
             callback(messages);
             connection.release();
@@ -533,6 +561,14 @@ exports.removeClasses = function(removed, callback) {
     var query_object = {
         removed: removed,
         table: "classes"
+    };
+    helper.remove(query_object, callback, pool);
+};
+
+exports.removeUsers = function(removed, callback) {
+    var query_object = {
+        removed: removed,
+        table: "users"
     };
     helper.remove(query_object, callback, pool);
 };

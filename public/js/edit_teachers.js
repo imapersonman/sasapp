@@ -105,7 +105,7 @@ function addRow() {
         + "<td><input class=\"form-control\" type=\"text\" value=\"Email\"></td>"
         + "<td><input class=\"form-control\" type=\"text\" value=\"Room Number\"></td>"
         + "<td>"
-        + "<button onclick=\"removeRow()\" style=\"float: right\" type=\"button\" class=\"btn btn-default btn-sm\">"
+        + "<button onclick=\"removeRow(this)\" style=\"float: right\" type=\"button\" class=\"btn btn-default btn-sm\">"
         + "<span class=\"glyphicon glyphicon-minus\"></span> Remove"
         + "</button>"
         + "</td>"
@@ -113,10 +113,10 @@ function addRow() {
     );
 }
 
-function removeRow(event) {
+function removeRow(target) {
     // Because firefox feels like being silly.
-    var row = parseInt($(event.target).parentsUntil("tbody").last().attr("row_index"));
-    var user_id = $(event.target).parentsUntil("tbody").last().attr("user_id");
+    var row = parseInt($(target).parentsUntil("tbody").last().attr("row_index"));
+    var user_id = $(target).parentsUntil("tbody").last().attr("user_id");
     var rowIndex = added.indexOf(row);
     if (user_id == "null") {
         console.log("row_index: " + rowIndex);
@@ -125,7 +125,7 @@ function removeRow(event) {
         removed.push(parseInt(user_id));
     }
     console.log(removed);
-    $(event.target).parentsUntil("tbody").last().remove();
+    $(target).parentsUntil("tbody").last().remove();
 }
 
 var rowSize = 0;

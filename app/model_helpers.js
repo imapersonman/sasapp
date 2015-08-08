@@ -14,8 +14,8 @@ exports.findAllUsersOfType = function(type, callback, pool) {
         fields: ["users.id", "users.name", "users.email", "sas_classes.room_num"],
         table: "users"
     };
-    var addition = "JOIN user_info ON users.id = user_info.user_id "
-                    + "JOIN sas_classes ON user_info.sas_class_id = sas_classes.id "
+    var addition = "LEFT JOIN user_info ON users.id = user_info.user_id "
+                    + "LEFT JOIN sas_classes ON user_info.sas_class_id = sas_classes.id "
                     + "WHERE type=" + mysql.escape(type);
 
     exports.find(query_object, addition, callback, pool);
@@ -157,9 +157,9 @@ exports.remove = function(query_object, callback, pool) {
     query = mysql.format(query, removed);
 
     pool.getConnection(function(error, connection) {
-        helper.processError(error);
+        exports.processError(error);
         connection.query(query, function(error, rows, fields) {
-            helper.processQueryError(error, query);
+            exports.processQueryError(error, query);
             callback(messages);
             connection.release();
         });
