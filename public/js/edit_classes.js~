@@ -17,8 +17,12 @@ $(document).ready(function() {
                 if ($(this).parent().index() == 1) {
                     editedObject.name = new_value;
                 } else
-                // Class Period
+                // Room Number
                 if ($(this).parent().index() == 2) {
+                    editedObject.room_num = new_value;
+                } else
+                // Class Period
+                if ($(this).parent().index() == 3) {
                     editedObject.period = new_value;
                 }
             }
@@ -52,10 +56,12 @@ function sendClassChanges() {
         var _class = rows[c];
 
         var name = $($($(_class).children()[1]).children()[0]).val().trim();
-        var period = $($($(_class).children()[2]).children()[0]).val().trim();
+        var room_num = $($($(_class).children()[2]).children()[0]).val().trim();
+        var period = $($($(_class).children()[3]).children()[0]).val().trim();
 
         classList.push({
             name: name,
+            room_num: room_num,
             period: period
         });
     }
@@ -97,6 +103,7 @@ function addRow() {
         + "<tr class_id=null row_index=" + rowSize + ">"
         + "<td>Teacher</td>"
         + "<td><input class=\"form-control\" type=\"text\" value=\"Name\"></td>"
+        + "<td><input class=\"form-control\" type=\"text\" value=\"Room Number\"></td>"
         + "<td><input class=\"form-control\" type=\"text\" value=\"Period\"></td>"
         + "<td>"
         + "<button onclick=\"removeRow(this)\" style=\"float: right\" type=\"button\" class=\"btn btn-default btn-sm\">"

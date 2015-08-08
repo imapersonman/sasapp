@@ -138,6 +138,7 @@ exports.findTeachersForStudent = function(student_id, callback) {
     var query = "SELECT "
                 + "users.name AS name, "
                 + "users.email AS email, "
+                + "student_classes.id AS st_id, "
                 + "users.room_num AS room_num "
                 + "FROM student_classes "
                 + "JOIN classes ON student_classes.class_id = classes.id "

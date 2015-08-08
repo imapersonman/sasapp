@@ -6,6 +6,7 @@
             <tr>
                 <th>Teacher</th>
                 <th>Name</th>
+                <th>Room Number</th>
                 <th>Period</th>
             </tr>
         </thead>
@@ -15,6 +16,7 @@
                 <td><%= classes[c].teacher_name %></td>
                 <td><input class="form-control" type="text" value=<%- "'" + classes[c].name + "'" %>></td>
                 <td><input class="form-control" type="text" value=<%= classes[c].period %>></td>
+                <td><input class="form-control" type="text" value=<%= classes[c].room_num %>></td>
                 <td>
                     <button onclick="removeRow(this)" style="float: right" type="button" class="btn btn-default btn-sm">
                         <span class="glyphicon glyphicon-minus"></span> Remove

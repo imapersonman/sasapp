@@ -1,5 +1,5 @@
 module.exports = {
-    host: "10.0.1.4",
+    host: "98.232.66.153",
     user: "dev",
     password: "testpassword",
     database: "sasapp",
