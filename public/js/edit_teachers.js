@@ -8,7 +8,6 @@ $(document).ready(function() {
     $("tbody.editable-list tr td input").blur(function() {
         new_value = $(this).val().trim();
         if(old_value.trim() != new_value.trim()) {
-
             var editedObject = {};
             if ($(this).parentsUntil("tbody").last().attr("user_id") != "null") {
                 // Teacher Name
@@ -19,16 +18,19 @@ $(document).ready(function() {
                 // Teacher Email
                 if ($(this).parent().index() == 1) {
                     editedObject.email = new_value;
-                } else
-                // Teacher Room Num
-                if ($(this).parent().index() == 2) {
-                    editedObject.room_num = new_value;
                 }
             }
             edited.push(editedObject);
         }
     }).focus(function() {
         old_value = $(this).val().trim();
+    });
+
+    $("tbody.editable-list tr td select").change(function() {
+        var editedObject = {};
+        editedObject.user_id = $(this).parentsUntil("tbody").last().attr("user_id");
+        editedObject.sas_class_id = $(this).val();
+        edited.push(editedObject);
     });
 });
 
@@ -54,18 +56,15 @@ function sendStudentChanges() {
 
         var name = $($($(teacher).children()[0]).children()[0]).val().trim();
         var email = $($($(teacher).children()[1]).children()[0]).val().trim();
-        var room_num = $($($(teacher).children()[2]).children()[0]).val().trim();
 
         teacherList.push({
             name: name,
             email: email,
-            room_num: room_num,
             type: "teacher"
         });
     }
 
     edited = packageEditedTeachers();
-    console.log("Updated: " + JSON.stringify(edited));
     $.post("/model/update/teacher",
     {
         editedTeachers: JSON.stringify(edited),
@@ -85,7 +84,7 @@ function packageEditedTeachers() {
             teachers[user_id] = {
                 name: null,
                 email: null,
-                room_num: null
+                sas_class_id: null
             };
         }
         var property_key = Object.keys(edited[e])[1];
@@ -97,13 +96,12 @@ function packageEditedTeachers() {
 
 function addRow() {
     rowSize++;
-    console.log("Added row at index: " + rowSize);
     added.push(rowSize);
     $(".editable-list").append(""
         + "<tr user_id=null row_index=" + rowSize + ">"
         + "<td><input class=\"form-control\" type=\"text\" value=\"Name\"></td>"
         + "<td><input class=\"form-control\" type=\"text\" value=\"Email\"></td>"
-        + "<td><input class=\"form-control\" type=\"text\" value=\"Room Number\"></td>"
+        + "<td>Room Number</td>"
         + "<td>"
         + "<button onclick=\"removeRow(this)\" style=\"float: right\" type=\"button\" class=\"btn btn-default btn-sm\">"
         + "<span class=\"glyphicon glyphicon-minus\"></span> Remove"
@@ -119,12 +117,10 @@ function removeRow(target) {
     var user_id = $(target).parentsUntil("tbody").last().attr("user_id");
     var rowIndex = added.indexOf(row);
     if (user_id == "null") {
-        console.log("row_index: " + rowIndex);
         added.splice(rowIndex, 1);
     }else {
         removed.push(parseInt(user_id));
     }
-    console.log(removed);
     $(target).parentsUntil("tbody").last().remove();
 }
 

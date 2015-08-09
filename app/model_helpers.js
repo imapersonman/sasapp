@@ -14,8 +14,7 @@ exports.findAllUsersOfType = function(type, callback, pool) {
         fields: ["users.id", "users.name", "users.email", "sas_classes.room_num"],
         table: "users"
     };
-    var addition = "LEFT JOIN user_info ON users.id = user_info.user_id "
-                    + "LEFT JOIN sas_classes ON user_info.sas_class_id = sas_classes.id "
+    var addition = "LEFT JOIN sas_classes ON users.sas_class_id = sas_classes.id "
                     + "WHERE type=" + mysql.escape(type);
 
     exports.find(query_object, addition, callback, pool);
@@ -38,10 +37,11 @@ exports.find = function(query_object, addition, callback, pool) {
     select_query += " " + addition;
 
     pool.getConnection(function(error, connection) {
+        exports.processError(error);
         connection.query(select_query, function(error, rows, fields) {
             if (error) {
-                console.log(error);
-                log(select_query, "query");
+                exports.log(error, "error");
+                exports.log(select_query, "query");
             } else {
                 callback(rows);
             }
@@ -89,10 +89,7 @@ exports.update = function(query_object, callback, pool) {
     pool.getConnection(function(error, connection) {
         connection.query(query, function(error, rows, fields) {
             var messages = [];
-            if (error) {
-                console.log(error.code);
-                log(query, "query");
-            }
+            exports.processQueryError(error, query);
             callback(messages);
             connection.release();
         });
@@ -168,14 +165,14 @@ exports.remove = function(query_object, callback, pool) {
 
 exports.processQueryError = function(error, query) {
     if (error) {
-        log(error, "error");
-        log(query, "query");
+        exports.log(error, "error");
+        exports.log(query, "query");
     }
 }
 
 exports.processError = function(error) {
     if (error) {
-        log(error, "error");
+        exports.log(error, "error");
         process.exit();
     }
 }

@@ -16,9 +16,8 @@ exports.findUserForGoogle = function(google_id, callback) {
 		+ "schools.name AS school_name, "
 		+ "schools.sas_name AS sas_name "
         + "FROM users "
-		+ "LEFT JOIN user_info ON user_info.user_id = users.id "
-		+ "LEFT JOIN sas_classes ON sas_classes.id = user_info.sas_class_id "
-		+ "LEFT JOIN schools ON user_info.school_id = schools.id "
+		+ "LEFT JOIN sas_classes ON sas_classes.id = users.sas_class_id "
+		+ "LEFT JOIN schools ON users.school_id = schools.id "
         + "WHERE google_id=" + esc_google_id;
 		+ "LIMIT 1";
 
@@ -178,8 +177,7 @@ exports.findAllUsers = function(callback) {
         fields: ["users.id", "users.name", "users.email", "sas_classes.room_num", "users.type"],
         table: "users"
     };
-    var addition = "JOIN user_info ON users.id = user_info.user_id "
-                    + "LEFT JOIN sas_classes ON user_info.sas_class_id = sas_classes.id";
+    var addition = "LEFT JOIN sas_classes ON users.sas_class_id = sas_classes.id";
     helper.find(query_object, "", callback, pool)
 };
 
@@ -241,8 +239,7 @@ exports.findTeachersForStudent = function(student_id, callback) {
     };
     var addition = "JOIN classes ON student_classes.class_id = classes.id "
                     + "JOIN users ON classes.teacher_id = users.id "
-                    + "JOIN user_info ON users.id = user_info.user_id "
-                    + "JOIN sas_classes ON user_info.sas_class_id = sas_classes.id";
+                    + "JOIN sas_classes ON users.sas_class_id = sas_classes.id";
 
     helper.find(query_object, addition, callback, pool);
 };
@@ -265,8 +262,7 @@ exports.findRankingsForStudent = function(student_id, callback) {
         table: "sas_requests"
     };
     var addition = "JOIN sas_classes ON sas_requests.sas_class_id = sas_classes.id "
-                    + "JOIN user_info ON sas_classes.id = user_info.sas_class_id "
-                    + "JOIN users ON user_info.user_id = users.id "
+                    + "JOIN users ON users.sas_class_id = sas_classes.id "
                     + "WHERE sas_requests.student_id = " + mysql.escape(student_id);
 
     helper.find(query_object, addition, callback, pool);
@@ -288,9 +284,9 @@ exports.findRankingsForTeacher = function(teacher_id, callback) {
         fields: ["users.name"],
         table: "sas_requests"
     };
-    var addition = "JOIN user_info ON sas_requests.sas_class_id=user_info.sas_class_id "
-                    + "JOIN users ON user_info.user_id = users.id AND user_info.type = \"teacher\" "
-                    + "WHERE users.id = " + mysql.escape(teacher_id);
+    var addition = "JOIN users ON sas_requests.sas_class_id=users.sas_class_id "
+                    + "WHERE users.id = " + mysql.escape(teacher_id)
+                    + "AND users.type = \"teacher\"";
 
     helper.find(query_object, addition, callback, pool);
 };
@@ -314,7 +310,14 @@ exports.findAllStudents = function(callback) {
  * 		function(users)
  */
 exports.findAllTeachers = function(callback) {
-    helper.findAllUsersOfType("teacher", callback, pool)
+    var query_object = {
+        fields: ["users.id", "users.name", "users.email", "sas_classes.room_num", "users.sas_class_id"],
+        table: "users"
+    };
+    var addition = "LEFT JOIN sas_classes ON users.sas_class_id = sas_classes.id "
+                    + "WHERE type = \"teacher\"";
+
+    helper.find(query_object, addition, callback, pool);
 };
 
 /*
@@ -371,15 +374,63 @@ exports.findAllClasses = function(callback) {
                 + "LEFT JOIN users ON classes.teacher_id = users.id";
 
     pool.getConnection(function(error, connection) {
+        helper.processError(error);
         connection.query(query, function(error, rows, fields) {
-            if (error) {
-                console.log(error);
-                logQuery(query);
-            }
+            helper.processQueryError(error, query);
             callback(rows);
             connection.release();
         });
     });
+};
+
+exports.findAllSASClasses = function(callback) {
+    var query = "SELECT "
+                + "users.name AS teacher_name, "
+                + "sas_classes.id AS id, "
+                + "sas_classes.room_num AS room_num, "
+                + "sas_classes.student_cap AS student_cap "
+                + "FROM sas_classes " 
+                + "LEFT JOIN users ON users.sas_class_id = sas_classes.id "
+                + "AND users.type = \"teacher\"";
+    pool.getConnection(function(error, connection) {
+        helper.processError(error);
+        connection.query(query, function(error, rows, fields) {
+            helper.processQueryError(error, query);
+            callback(rows);
+            connection.release();
+        });
+    });
+};
+
+exports.findSASClass = function(sas_class_id, callback) {
+    var query = "SELECT "
+                + "users.id AS teacher_id, "
+                + "users.name AS teacher_name, "
+                + "sas_classes.id AS id, "
+                + "sas_classes.room_num AS room_num, "
+                + "sas_classes.student_cap AS student_cap "
+                + "FROM sas_classes "
+                + "LEFT JOIN users ON users.sas_class_id = sas_classes.id "
+                + "WHERE sas_classes.id = " + mysql.escape(sas_class_id);
+                + "LIMIT 1";
+
+    pool.getConnection(function(error, connection) {
+        helper.processError(error);
+        connection.query(query, function(error, rows, fields) {
+            helper.processQueryError(error, query);
+            callback(rows[0]);
+            connection.release();
+        });
+    });
+};
+
+exports.findStudentsForSASClass = function(sas_class_id, callback) {
+    var query_object = {
+        fields: ["id", "name", "email"],
+        table: "users"
+    };
+    var addition = "WHERE users.sas_class_id = " + mysql.escape(sas_class_id);
+    helper.find(query_object, addition, callback);
 };
 
 exports.addUsers = function(added, callback) {
@@ -392,27 +443,18 @@ exports.addUsers = function(added, callback) {
 };
 
 exports.addTeachers = function(added, callback) {
-    var user_query = "INSERT INTO users (name, email) VALUES ";
-    var info_query = "INSERT INTO user_info (sas_class_id) VALUES ";
+    var user_query = "INSERT INTO users (name, email, sas_class_id) VALUES ";
     for (var a = 0; a < added.length; a++) {
-        user_query += "(" + added[a].name + "," + added[a].email + ")";
-        // info_query += FINISH THIS PART WHEN YOU GET BACK
+        user_query += "(" + added[a].name + "," + added[a].email + "," + added[a].sas_class_id + ")";
         if (a < added.length - 1) {
             user_query += ",";
-            info_query += ",";
         }
     }
     pool.getConnection(function(error, connection) {
         helper.processError(error);
         connection.query(user_query, function(error, rows, fields) {
-            if (error) return connection.rollback(function() {});
-            connection.query(info_query, function(error, rows, field) {
-                if (error) return connection.rollback(function() {});
-                connection.commit(function(error) {
-                    if (error) return connection.rollback(function() {});
-                    console.log("Transaction Successful");
-                });
-            });
+            helper.processQueryError(error, query);
+            callback([]);
         });
     });
 };
@@ -424,6 +466,22 @@ exports.addClasses = function(added, callback) {
         added: added
     };
     helper.add(query_object, callback, pool);
+};
+
+exports.addSASClasses = function(added, callback) {
+    var query = "INSERT INTO sas_classes (`room_num`, `student_cap`) VALUES";
+    for (var a = 0; a < added.length; a++) {
+        query += "(" + mysql.escape(added[a].room_num) + ", " + mysql.escape(added[a].student_cap) + ")";
+        if (a < added.length - 1) query += ",";
+    }
+    
+    pool.getConnection(function(error, connection) {
+        helper.processError(error);
+        connection.query(query, function(error, rows, fields) {
+            helper.processQueryError(error, query);
+            callback([]);
+        });
+    });
 };
 
 // This needs to be re-written using 'helper.add()'.
@@ -497,9 +555,18 @@ exports.addSASRequests = function(ranks, callback) {
     });
 };
 
-exports.updateUsers = function(updates, callback) {
+exports.updateStudents = function(updates, callback) {
     var query_object = {
         fields: ["name", "email"],
+        table: "users",
+        updates: updates
+    };
+    helper.update(query_object, callback, pool);
+};
+
+exports.updateTeachers = function(updates, callback) {
+    var query_object = {
+        fields: ["name", "email", "sas_class_id"],
         table: "users",
         updates: updates
     };
@@ -512,6 +579,16 @@ exports.updateClasses = function(updates, callback) {
         table: "classes",
         updates: updates
     };
+    helper.log(updates, "updates");
+    helper.update(query_object, callback, pool);
+};
+
+exports.updateSASClasses = function(updates, callback) {
+    var query_object = {
+        fields: ["room_num", "student_cap"],
+        table: "sas_classes",
+        updates: updates
+    };
     helper.update(query_object, callback, pool);
 };
 
@@ -519,7 +596,7 @@ exports.updateClasses = function(updates, callback) {
 exports.updateClassTeacher = function(class_id, teacher_id, callback) {
     var query = "UPDATE classes "
                 + "SET teacher_id = " + mysql.escape(teacher_id) + " "
-                + "WHERE classes.id = " + class_id;
+                + "WHERE classes.id = " + mysql.escape(class_id);
 
     pool.getConnection(function(error, connection) {
         connection.query(query, function(error, rows, fields) {
@@ -529,6 +606,21 @@ exports.updateClassTeacher = function(class_id, teacher_id, callback) {
                 logQuery(query);
             }
             callback(messages);
+            connection.release();
+        });
+    });
+};
+
+exports.updateSASCap = function(sas_class_id, student_cap, callback) {
+    var query = "UPDATE sas_classes "
+                + "SET student_cap = " + mysql.escape(student_cap);
+                + "WHERE sas_classes.id = " + mysql.escape(sas_class_id);
+
+    pool.getConnection(function(error, connection) {
+        helper.processError(error);
+        connection.query(query, function(error, rows, fields) {
+            helper.processQueryError(error, query);
+            callback([]);
             connection.release();
         });
     });
@@ -561,6 +653,14 @@ exports.removeClasses = function(removed, callback) {
     var query_object = {
         removed: removed,
         table: "classes"
+    };
+    helper.remove(query_object, callback, pool);
+};
+
+exports.removeSASClasses = function(removed, callback) {
+    var query_object = {
+        removed: removed,
+        table: "sas_classes"
     };
     helper.remove(query_object, callback, pool);
 };

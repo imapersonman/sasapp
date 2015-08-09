@@ -74,7 +74,7 @@ module.exports = function(app, passport) {
     // + all_students: An array of all students
     // + class_teacher: A user object representing the class teacher
     // + all_teachers: AN array of all teachers
-    app.get("/user/classes/:class_id", isLoggedIn, isAdmin, function(request, response) {
+    app.get("/user/classes/edit/:class_id", isLoggedIn, isAdmin, function(request, response) {
         Array.prototype.diff = function(a) {
             return this.filter(function(i) {return a.indexOf(i) < 0;});
         };
@@ -94,6 +94,27 @@ module.exports = function(app, passport) {
                         };
                         response.render("admin", object);
                     });
+                });
+            });
+        });
+    });
+
+    app.get("/user/sas_classes/edit/:sas_class_id", isLoggedIn, isAdmin, function(request, response) {
+        Array.prototype.diff = function(a) {
+            return this.filter(function(i) {return a.indexOf(i) < 0;});
+        };
+        var sas_class_id = request.params.sas_class_id;
+        model.findSASClass(sas_class_id, function(sas_class) {
+            model.findAllTeachers(function(all_teachers) {
+                model.findStudentsForSASClass(sas_class_id, function(students) {
+                    var object = {
+                        page: "edit_sas_class",
+                        title: "Edit SAS Class",
+                        sas_class: sas_class,
+                        students: students,
+                        all_teachers: all_teachers
+                    };
+                    response.render("admin", object);
                 });
             });
         });
@@ -145,13 +166,43 @@ module.exports = function(app, passport) {
     // on individual classes will be taken from external sources supplied by the district.
     // Teachers do not be edited on the individual or batch level.
     app.get("/user/teachers/edit", isLoggedIn, isAdmin, function(request, response) {
-        model.findAllTeachers(function(teacherList) {
-            var teacherList = (teacherList) ? teacherList : [];
+        model.findAllSASClasses(function(sas_classes) {
+            var sas_classes = (sas_classes) ? sas_classes : [];
+            model.findAllTeachers(function(teacherList) {
+                var teacherList = (teacherList) ? teacherList : [];
+                var object = {
+                    page: "edit_teachers",
+                    title: "Edit Teachers",
+                    user: request.user,
+                    teachers: teacherList,
+                    sas_classes: sas_classes
+                };
+                response.render("admin", object);
+            });
+        });
+    });
+
+    app.get("/user/sas_classes", isLoggedIn, isAdmin, function(request, response) {
+        model.findAllSASClasses(function(sas_classes) {
+            var sas_classes = (sas_classes) ? sas_classes : [];
             var object = {
-                page: "edit_teachers",
-                title: "Edit Teachers",
+                page: "sas_classes",
+                title: "SAS Classes",
                 user: request.user,
-                teachers: teacherList
+                sas_classes: sas_classes
+            };
+            response.render("admin", object);
+        });
+    });
+
+    app.get("/user/sas_classes/edit", isLoggedIn, isAdmin, function(request, response) {
+        model.findAllSASClasses(function(sas_classes) {
+            var sas_classes = (sas_classes) ? sas_classes : [];
+            var object = {
+                page: "edit_sas_classes",
+                title: "Edit SAS Classes",
+                user: request.user,
+                sas_classes: sas_classes
             };
             response.render("admin", object);
         });
@@ -166,7 +217,7 @@ module.exports = function(app, passport) {
         var removedTeachers = (request.body.removedTeachers) ? JSON.parse(request.body.removedTeachers) : [];
         var disp_messages = [];
         if (Object.keys(editedTeachers).length > 0) {
-            model.updateUsers(editedTeachers, function(messages) {
+            model.updateTeachers(editedTeachers, function(messages) {
                 // Something
             });
         }
@@ -192,7 +243,7 @@ module.exports = function(app, passport) {
         var removedStudents = (request.body.removedStudents) ? JSON.parse(request.body.removedStudents) : null;
         var disp_messages = [];
         if (Object.keys(editedStudents).length > 0) {
-            model.updateUsers(editedStudents, function(messages) {
+            model.updateStudents(editedStudents, function(messages) {
                 disp_messages.push("Something went wrong with the server.")
                 disp_messages.concat(messages);
             });
@@ -243,6 +294,32 @@ module.exports = function(app, passport) {
         response.send(disp_messages);
     });
 
+    app.post("/model/update/sas_class", isLoggedIn, isAdmin, function(request, response) {
+        var editedClasses = (request.body.editedClasses) ? JSON.parse(request.body.editedClasses) : null 
+        var addedClasses = (request.body.addedClasses) ? JSON.parse(request.body.addedClasses) : null 
+        var removedClasses = (request.body.removedClasses) ? JSON.parse(request.body.removedClasses) : null;
+        var disp_messages = [];
+        if (Object.keys(editedClasses).length > 0) {
+            model.updateSASClasses(editedClasses, function(messages) {
+                disp_messages.push("Something went wrong with the server.")
+                disp_messages.concat(messages);
+            });
+        }
+        if (Object.keys(addedClasses).length > 0) {
+            model.addSASClasses(addedClasses, function(messages) {
+                disp_messages.push("Something went wrong with the server.")
+                disp_messages.concat(messages);
+            });
+        }
+        if (Object.keys(removedClasses).length > 0) {
+            model.removeSASClasses(removedClasses, function(messages) {
+                disp_messages.push("Something went wrong with the server.")
+                disp_messages.concat(messages);
+            });
+        }
+        response.send(disp_messages);
+    });
+
     // This form should not be needed in the future.  If all goes well all the information
     // on individual classes will be taken from external sources supplied by the district.
     // Classes do not be edited on the individual or batch level.
@@ -268,6 +345,14 @@ module.exports = function(app, passport) {
         var class_id = request.body.class_id;
         var teacher_id = request.body.teacher_id;
         model.updateClassTeacher(class_id, teacher_id, function(messages) {
+            response.end(JSON.stringify(messages));
+        });
+    });
+
+    app.post("/model/update/sas_class/student_cap", isLoggedIn, isAdmin, function(request, response) {
+        var sas_class_id = request.body.sas_class_id;
+        var student_cap = request.body.student_cap;
+        model.updateSASCap(sas_class_id, student_cap, function(messages) {
             response.end(JSON.stringify(messages));
         });
     });
