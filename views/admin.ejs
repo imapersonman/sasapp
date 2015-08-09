@@ -1,6 +1,10 @@
 <html lang="en">
     <head>
-        <title>Highlander Home - <%= title %></title>
+        <% if (!user.school_name) { %>
+        <title>Admin Portal - <%= title %></title>
+        <% } else { %>
+        <title><%= user.school_name %> - <%= title %>
+        <% } %>
         <link rel="stylesheet" type="text/css" href="/static/bootstrap/css/bootstrap.css">
         <link rel="stylesheet" type="text/css" href="/static/bootstrap-combobox/css/bootstrap-combobox.css">
         <link rel="stylesheet" type="text/css" href="/static/css/main.css">

@@ -137,15 +137,18 @@ module.exports = function(app, passport) {
     // on individual classes will be taken from external sources supplied by the district.
     // Students do not be edited on the individual or batch level.
     app.get("/user/students/edit", isLoggedIn, isAdmin, function(request, response) {
-        model.findAllStudents(function(studentList) {
-            var studentList = (studentList) ? studentList : [];
-            var object = {
-                page: "edit_students",
-                title: "Edit Students",
-                user: request.user,
-                students: studentList
-            };
-            response.render("admin", object);
+        model.findAllSchools(function(schools) {
+            model.findAllStudents(function(studentList) {
+                var studentList = (studentList) ? studentList : [];
+                var object = {
+                    page: "edit_students",
+                    title: "Edit Students",
+                    user: request.user,
+                    students: studentList,
+                    schools: schools
+                };
+                response.render("admin", object);
+            });
         });
     });
 
@@ -166,18 +169,21 @@ module.exports = function(app, passport) {
     // on individual classes will be taken from external sources supplied by the district.
     // Teachers do not be edited on the individual or batch level.
     app.get("/user/teachers/edit", isLoggedIn, isAdmin, function(request, response) {
-        model.findAllSASClasses(function(sas_classes) {
-            var sas_classes = (sas_classes) ? sas_classes : [];
-            model.findAllTeachers(function(teacherList) {
-                var teacherList = (teacherList) ? teacherList : [];
-                var object = {
-                    page: "edit_teachers",
-                    title: "Edit Teachers",
-                    user: request.user,
-                    teachers: teacherList,
-                    sas_classes: sas_classes
-                };
-                response.render("admin", object);
+        model.findAllSchools(function(schools) {
+            model.findAllSASClasses(function(sas_classes) {
+                var sas_classes = (sas_classes) ? sas_classes : [];
+                model.findAllTeachers(function(teacherList) {
+                    var teacherList = (teacherList) ? teacherList : [];
+                    var object = {
+                        page: "edit_teachers",
+                        title: "Edit Teachers",
+                        user: request.user,
+                        teachers: teacherList,
+                        sas_classes: sas_classes,
+                        schools: schools
+                    };
+                    response.render("admin", object);
+                });
             });
         });
     });

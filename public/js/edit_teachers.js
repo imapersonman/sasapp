@@ -26,10 +26,17 @@ $(document).ready(function() {
         old_value = $(this).val().trim();
     });
 
-    $("tbody.editable-list tr td select").change(function() {
+    $("tbody.editable-list tr td select#sas-select").change(function() {
         var editedObject = {};
         editedObject.user_id = $(this).parentsUntil("tbody").last().attr("user_id");
         editedObject.sas_class_id = $(this).val();
+        edited.push(editedObject);
+    });
+
+    $("tbody.editable-list tr td select#school-select").change(function() {
+        var editedObject = {};
+        editedObject.user_id = $(this).parentsUntil("tbody").last().attr("user_id");
+        editedObject.school_id = $(this).val();
         edited.push(editedObject);
     });
 });
@@ -84,7 +91,8 @@ function packageEditedTeachers() {
             teachers[user_id] = {
                 name: null,
                 email: null,
-                sas_class_id: null
+                sas_class_id: null,
+                school_id: null
             };
         }
         var property_key = Object.keys(edited[e])[1];
@@ -102,6 +110,7 @@ function addRow() {
         + "<td><input class=\"form-control\" type=\"text\" value=\"Name\"></td>"
         + "<td><input class=\"form-control\" type=\"text\" value=\"Email\"></td>"
         + "<td>Room Number</td>"
+        + "<td>School</td>"
         + "<td>"
         + "<button onclick=\"removeRow(this)\" style=\"float: right\" type=\"button\" class=\"btn btn-default btn-sm\">"
         + "<span class=\"glyphicon glyphicon-minus\"></span> Remove"

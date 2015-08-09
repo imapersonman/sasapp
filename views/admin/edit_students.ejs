@@ -7,6 +7,7 @@
                 <th>Name</th>
                 <th>Email</th>
                 <th>SAS Room Number</th>
+                <th>School</th>
             </tr>
         </thead>
         <tbody class="editable-list">
@@ -15,6 +16,18 @@
                 <td><input class="form-control" type="text" value=<%- "'" + students[s].name + "'" %>></td>
                 <td><input class="form-control" type="text" value=<%= students[s].email %>></td>
                 <td><%= students[s].room_num %></td>
+                <td>
+                    <select id="school-select">
+                        <% if (students[s].school_name) { %>
+                        <option value=<%= students[s].school_id %>><%= students[s].school_name %></option>
+                        <% } else { %>
+                        <option></option>
+                        <% } %>
+                        <% for (var s = 0; s < schools.length; s++) { %>
+                        <option value=<%= schools[s].id %>><%= schools[s].name %></option>
+                        <% } %>
+                    </select>
+                </td>
                 <td>
                     <button onclick="removeRow(this)" style="float: right" type="button" class="btn btn-default btn-sm">
                         <span class="glyphicon glyphicon-minus"></span> Remove

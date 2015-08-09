@@ -299,7 +299,23 @@ exports.findRankingsForTeacher = function(teacher_id, callback) {
  * 		function(users)
  */
 exports.findAllStudents = function(callback) {
-    helper.findAllUsersOfType("student", callback, pool);
+    var query = "SELECT "
+                + "users.id AS id, users.name AS name, users.email AS email, users.school_id AS school_id, "
+                + "sas_classes.room_num AS room_num, "
+                + "schools.name AS school_name "
+                + "FROM users "
+                + "LEFT JOIN sas_classes ON sas_classes.id = users.sas_class_id "
+                + "LEFT JOIN schools ON schools.id = users.school_id "
+                + "WHERE users.type = \"student\"";
+
+    pool.getConnection(function(error, connection) {
+        helper.processError(error);
+        connection.query(query, function(error, rows, fields) {
+            helper.processQueryError(error, query);
+            callback(rows);
+            connection.release();
+        });
+    });
 };
 
 /*
@@ -310,14 +326,23 @@ exports.findAllStudents = function(callback) {
  * 		function(users)
  */
 exports.findAllTeachers = function(callback) {
-    var query_object = {
-        fields: ["users.id", "users.name", "users.email", "sas_classes.room_num", "users.sas_class_id"],
-        table: "users"
-    };
-    var addition = "LEFT JOIN sas_classes ON users.sas_class_id = sas_classes.id "
-                    + "WHERE type = \"teacher\"";
+    var query = "SELECT "
+                + "users.id AS id, users.name AS name, users.email AS email, users.sas_class_id AS sas_class_id, users.school_id AS school_id, "
+                + "sas_classes.room_num AS room_num, "
+                + "schools.name AS school_name "
+                + "FROM users "
+                + "LEFT JOIN sas_classes ON sas_classes.id = users.sas_class_id "
+                + "LEFT JOIN schools ON schools.id = users.school_id "
+                + "WHERE users.type = \"teacher\"";
 
-    helper.find(query_object, addition, callback, pool);
+    pool.getConnection(function(error, connection) {
+        helper.processError(error);
+        connection.query(query, function(error, rows, fields) {
+            helper.processQueryError(error, query);
+            callback(rows);
+            connection.release();
+        });
+    });
 };
 
 /*
@@ -574,7 +599,7 @@ exports.addSASRequests = function(ranks, callback) {
 
 exports.updateStudents = function(updates, callback) {
     var query_object = {
-        fields: ["name", "email"],
+        fields: ["name", "email", "school_id"],
         table: "users",
         updates: updates
     };
@@ -583,7 +608,7 @@ exports.updateStudents = function(updates, callback) {
 
 exports.updateTeachers = function(updates, callback) {
     var query_object = {
-        fields: ["name", "email", "sas_class_id"],
+        fields: ["name", "email", "sas_class_id", "school_id"],
         table: "users",
         updates: updates
     };
