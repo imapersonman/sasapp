@@ -1,0 +1,12 @@
+<script src="/static/js/edit_sas_class.js"></script>
+
+<div class="row">
+    <div class="col-md-4">
+        <% if (sas_class.teacher_name) { %>
+            <strong>Teacher:</strong> <%= sas_class.teacher_name %>
+            <strong>Email:</strong> <%= sas_class.email %><br />
+        <strong>Room Number:</strong> <%= sas_class.room_num %><br />
+        <% } %> 
+        <strong>Student Cap:</strong> <input id="s_cap" style="width: 80px" class="form-control" type="text" value=<%= sas_class.student_cap %>><button onclick=<%- "'changeStudentCap(" + sas_class.id + ")'" %> style="float: right" type="button" class="btn btn-default btn-sm">Change Student Cap</button><br />
+    </div>
+</div>
