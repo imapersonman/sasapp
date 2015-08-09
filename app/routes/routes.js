@@ -208,6 +208,32 @@ module.exports = function(app, passport) {
         });
     });
 
+    app.get("/user/schools", isLoggedIn, isAdmin, function(request, response) {
+        model.findAllSchools(function(schools) {
+            var schools = (schools) ? schools : [];
+            var object = {
+                page: "schools",
+                title: "Schools",
+                user: request.user,
+                schools: schools
+            };
+            response.render("admin", object);
+        });
+    });
+
+    app.get("/user/schools/edit", isLoggedIn, isAdmin, function(request, response) {
+        model.findAllSchools(function(schools) {
+            var schools = (schools) ? schools : [];
+            var object = {
+                page: "edit_schools",
+                title: "Edit Schools",
+                user: request.user,
+                schools: schools
+            };
+            response.render("admin", object);
+        });
+    });
+
     // This form should not be needed in the future.  If all goes well all the information
     // on individual classes will be taken from external sources supplied by the district.
     // Teachers do not be edited on the individual or batch level.
@@ -315,6 +341,29 @@ module.exports = function(app, passport) {
             model.removeSASClasses(removedClasses, function(messages) {
                 disp_messages.push("Something went wrong with the server.")
                 disp_messages.concat(messages);
+            });
+        }
+        response.send(disp_messages);
+    });
+
+    app.post("/model/update/schools", isLoggedIn, isAdmin, function(request, response) {
+        var editedTeachers = (request.body.editedTeachers) ? JSON.parse(request.body.editedTeachers) : [];
+        var addedTeachers = (request.body.addedTeachers) ? JSON.parse(request.body.addedTeachers) : [];
+        var removedTeachers = (request.body.removedTeachers) ? JSON.parse(request.body.removedTeachers) : [];
+        var disp_messages = [];
+        if (Object.keys(editedTeachers).length > 0) {
+            model.updateSchools(editedTeachers, function(messages) {
+                // Something
+            });
+        }
+        if (Object.keys(addedTeachers).length > 0) {
+            model.addSchools(addedTeachers, function(messages) {
+                // Something
+            });
+        }
+        if (Object.keys(removedTeachers).length > 0) {
+            model.removeSchools(removedTeachers, function(messages) {
+                // Something
             });
         }
         response.send(disp_messages);

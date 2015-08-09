@@ -430,7 +430,15 @@ exports.findStudentsForSASClass = function(sas_class_id, callback) {
         table: "users"
     };
     var addition = "WHERE users.sas_class_id = " + mysql.escape(sas_class_id);
-    helper.find(query_object, addition, callback);
+    helper.find(query_object, addition, callback, pool);
+};
+
+exports.findAllSchools = function(callback) {
+    var query_object = {
+        fields: ["id", "name", "sas_name"],
+        table: "schools"
+    };
+    helper.find(query_object, "", callback, pool);
 };
 
 exports.addUsers = function(added, callback) {
@@ -482,6 +490,15 @@ exports.addSASClasses = function(added, callback) {
             callback([]);
         });
     });
+};
+
+exports.addSchools = function(added, callback) {
+    var query_object = {
+        fields: ["name", "sas_name"],
+        table: "schools",
+        added: added
+    };
+    helper.add(query_object, callback, pool);
 };
 
 // This needs to be re-written using 'helper.add()'.
@@ -592,6 +609,15 @@ exports.updateSASClasses = function(updates, callback) {
     helper.update(query_object, callback, pool);
 };
 
+exports.updateSchools = function(updates, callback) {
+    var query_object = {
+        fields: ["name", "sas_name"],
+        table: "schools",
+        updates: updates
+    };
+    helper.update(query_object, callback, pool);
+};
+
 // This needs to be re-written using 'helper.update()'.
 exports.updateClassTeacher = function(class_id, teacher_id, callback) {
     var query = "UPDATE classes "
@@ -669,6 +695,14 @@ exports.removeUsers = function(removed, callback) {
     var query_object = {
         removed: removed,
         table: "users"
+    };
+    helper.remove(query_object, callback, pool);
+};
+
+exports.removeSchools = function(removed, callback) {
+    var query_object = {
+        removed: removed,
+        table: "schools"
     };
     helper.remove(query_object, callback, pool);
 };
