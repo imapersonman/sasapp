@@ -486,7 +486,7 @@ exports.addTeachers = function(added, callback) {
     pool.getConnection(function(error, connection) {
         helper.processError(error);
         connection.query(user_query, function(error, rows, fields) {
-            helper.processQueryError(error, query);
+            helper.processQueryError(error, user_query);
             callback([]);
         });
     });
