@@ -466,29 +466,19 @@ exports.findAllSchools = function(callback) {
     helper.find(query_object, "", callback, pool);
 };
 
-exports.addUsers = function(added, callback) {
-    query_object = {
-        fields: ["name", "email", "type"],
+exports.addStudents = function(added, callback) {
+    for (var s = 0; s < added.length; s++) {
+        added.type = "student";
+    }
+    var query_object = {
+        fields: ["name", "email"],
         table: "users",
         added: added
     };
-    helper.add(query_object, callback, pool);
-};
-
-exports.addTeachers = function(added, callback) {
-    var user_query = "INSERT INTO users (name, email, sas_class_id) VALUES ";
-    for (var a = 0; a < added.length; a++) {
-        user_query += "(" + added[a].name + "," + added[a].email + "," + added[a].sas_class_id + ")";
-        if (a < added.length - 1) {
-            user_query += ",";
-        }
-    }
     pool.getConnection(function(error, connection) {
         helper.processError(error);
-        connection.query(user_query, function(error, rows, fields) {
-            helper.processQueryError(error, user_query);
-            callback([]);
-        });
+        var addQuery = helper.addQuery(query_object);
+        helper.transact([addQuery], connection, callback);
     });
 };
 

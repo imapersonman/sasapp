@@ -5,7 +5,7 @@ CREATE TABLE `users` (
 	`google_id` varchar(128),
 	`token` varchar(128),
 	`type` varchar(48) NOT NULL,
-	`sas_class_id` INT,
+	`sas_teacher_id` INT,
 	`school_id` INT,
 	PRIMARY KEY (`id`)
 );
@@ -42,13 +42,12 @@ CREATE TABLE `schools` (
 );
 
 CREATE TABLE `sas_classes` (
-	`id` INT NOT NULL AUTO_INCREMENT,
+	`teacher_id` INT NOT NULL,
 	`room_num` varchar(16) NOT NULL,
-	`student_cap` INT,
-	PRIMARY KEY (`id`)
+	`student_cap` INT
 );
 
-ALTER TABLE `users` ADD CONSTRAINT `users_fk0` FOREIGN KEY (`sas_class_id`) REFERENCES `sas_classes`(`id`);
+ALTER TABLE `users` ADD CONSTRAINT `users_fk0` FOREIGN KEY (`sas_teacher_id`) REFERENCES `sas_classes`(`teacher_id`);
 
 ALTER TABLE `users` ADD CONSTRAINT `users_fk1` FOREIGN KEY (`school_id`) REFERENCES `schools`(`id`);
 
@@ -62,4 +61,5 @@ ALTER TABLE `student_classes` ADD CONSTRAINT `student_classes_fk0` FOREIGN KEY (
 
 ALTER TABLE `student_classes` ADD CONSTRAINT `student_classes_fk1` FOREIGN KEY (`class_id`) REFERENCES `classes`(`id`);
 
-ALTER TABLE `users` ADD UNIQUE (`email`);
+ALTER TABLE `sas_classes` ADD CONSTRAINT `sas_classes_fk0` FOREIGN KEY (`teacher_id`) REFERENCES `users`(`id`);
+

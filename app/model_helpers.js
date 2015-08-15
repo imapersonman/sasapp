@@ -20,7 +20,7 @@ exports.findAllUsersOfType = function(type, callback, pool) {
     exports.find(query_object, addition, callback, pool);
 };
 
-exports.find = function(query_object, addition, callback, pool) {
+exports.findQuery = function(query_object, addition, callback, pool) {
     var select_query = "SELECT ";
     var field_array = query_object.fields;
     if (field_array[0] == "*") {
@@ -35,21 +35,10 @@ exports.find = function(query_object, addition, callback, pool) {
     }
     select_query += "FROM " + mysql.escapeId(query_object.table);
     select_query += " " + addition;
+    return select_query;
+};
 
-    pool.getConnection(function(error, connection) {
-        exports.processError(error);
-        connection.query(select_query, function(error, rows, fields) {
-            if (error) {
-                exports.log(error, "error");
-                exports.log(select_query, "query");
-            } else {
-                callback(rows);
-            }
-        });
-    });
-}
-
-exports.update = function(query_object, callback, pool) {
+exports.updateQuery = function(query_object, callback, pool) {
     var query = "UPDATE " + query_object.table + " SET ";
     var columns = query_object.fields;
     var updates = query_object.updates;
@@ -85,18 +74,10 @@ exports.update = function(query_object, callback, pool) {
         if (i < ids.length - 1) query += ",";
     }
     query += ")";
+    return query;
+};
 
-    pool.getConnection(function(error, connection) {
-        connection.query(query, function(error, rows, fields) {
-            var messages = [];
-            exports.processQueryError(error, query);
-            callback(messages);
-            connection.release();
-        });
-    });
-}
-
-exports.add = function(query_object, callback, pool) {
+exports.addQuery = function(query_object) {
     var messages = [];
     var fields = query_object.fields;
     var field_query = "(";
@@ -125,20 +106,10 @@ exports.add = function(query_object, callback, pool) {
         }
     }
     query = mysql.format(query, query_values);
+    return query;
+};
 
-    pool.getConnection(function(error, connection) {
-        connection.query(query, function(error, rows, fields) {
-            if (error) {
-                console.log(error);
-                exports.log(query, "query");
-            }
-            callback(messages);
-            connection.release();
-        });
-    });
-}
-
-exports.remove = function(query_object, callback, pool) {
+exports.removeQuery = function(query_object) {
     var messages = [];
     var query = "DELETE "
                 + "FROM " + query_object.table + " "
@@ -152,16 +123,8 @@ exports.remove = function(query_object, callback, pool) {
         }
     }
     query = mysql.format(query, removed);
-
-    pool.getConnection(function(error, connection) {
-        exports.processError(error);
-        connection.query(query, function(error, rows, fields) {
-            exports.processQueryError(error, query);
-            callback(messages);
-            connection.release();
-        });
-    });
-}
+    return query;
+};
 
 exports.processQueryError = function(error, query) {
     if (error) {
@@ -185,3 +148,87 @@ exports.log = function(query, type) {
     console.log("=============END " + type + "=============");
     console.log();
 }
+
+exports.transact = function(queries, connection, callback) {
+    connection.beginTransaction(function(error) {
+        exports.processError(error);
+        if (queries.length > 0) {
+            internalQuery(queries, connection, callback);
+        } else {
+            console.log("Invalid queries array");
+            process.exit();
+        }
+    });
+};
+
+function internalQuery(queries, connection, callback) {
+    if (queries.length > 1) {
+        connection.query(queries.pop(), function(error, rows, fields) {
+            if (error) {
+                connection.rollback(function() {
+                    exports.log(error, "error");
+                });
+            } else {
+                internalQuery(queries, connection);
+            }
+        });
+    }
+    if (queries.length == 1) {
+        connection.query(queries[0], function(error, rows, fields) {
+            if (error) {
+                connection.rollback(function() {
+                    exports.log(error, "error");
+                });
+            } else {
+                connection.commit(function(error) {
+                    processTransactionError(error, connection);
+                    connection.release();
+                    callback();
+                });
+            }
+        });
+    }
+};
+
+exports.processTransactionError = function(error, connection) {
+    if (error) {
+        connection.rollback(function() {
+            exports.log(error, "error");
+        });
+    }
+};
+
+exports.query = function(query, pool, callback) {
+    pool.getConnection(function(error, connection) {
+        // TODO(koissi) Cleanup debug
+        if (error) throw error;
+        connection.query(query, function(error, results) {
+            // TODO(koissi) Cleanup debug
+            if (error) throw error;
+            callback(results);
+        });
+    });
+};
+
+exports.runProc = function(proc_name, params, pool, callback) {
+    var query = buildProcQuery(proc_name, params, pool, callback);
+    exports.query(query, pool, callback);
+};
+
+exports.buildProcQuery = function(proc_name, params) {
+    var query = "CALL " + proc_name + "(";
+    for (var p = 0; p < params.length; p++) {
+        query += pool.escape(params[p]);
+        if (p < params.length - 1) query += ",";
+    }
+    return query;
+};
+
+exports.buildMultiStatementQuery = function(queries) {
+    var query = "";
+    for (var q = 0; q < queries.length; q++) {
+        query += queries[q];
+        if (q < queries.length - 1) query += "; ";
+    }
+    return query;
+};
