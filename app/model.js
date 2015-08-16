@@ -99,15 +99,15 @@ exports.findAllSASClasses = function(callback) {
     helper.runProc(proc_name, [], pool, callback);
 };
 
-exports.findSASClass = function(sas_class_id, callback) {
+exports.findSASClass = function(teacher_id, callback) {
     var proc_name = "FindSASClass";
-    var params = [sas_class_id];
+    var params = [teacher_id];
     helper.runProc(proc_name, params, pool, callback);
 };
 
-exports.findStudentsForSASClass = function(sas_class_id, callback) {
+exports.findStudentsForSASClass = function(teacher_id, callback) {
     var proc_name = "FindStudentsForSASClass";
-    var params = [sas_class_id];
+    var params = [teacher_id];
     helper.runProc(proc_name, params, pool, callback);
 };
 
@@ -162,6 +162,7 @@ exports.addSchools(added, callback) {
     helper.query(query, pool, callback);
 };
 
+// TODO(koissi): Rewrite to reflect Proc SAS Schema
 exports.addStudentsToClass(class_id, added, callback) {
     var proc_name = "AddStudentToClass";
     var query = "";
