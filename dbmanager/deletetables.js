@@ -1,4 +1,5 @@
 const ideal_tables = ["sas_classes", "schools", "classes", "sas_requests", "student_classes", "users"];
+const new_tables = ["sas_classes", "schools", "classes", "sas_requests", "student_classes", "users", "student_sas_classes"];
 const tables = ["users", "classes", "student_classes", "sas_requests"];
 
 var arg = process.argv[2];
@@ -7,6 +8,9 @@ var del_tables = tables;
 if (arg == "ideal") {
     console.log("Deleting ideal database.");
     del_tables = ideal_tables; 
+} else if (arg == "new") {
+    console.log("Deleting new database.");
+    del_tables = new_tables;
 } else {
     console.log("Deleting non-ideal database.");
 }

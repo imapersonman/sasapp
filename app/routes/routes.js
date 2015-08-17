@@ -1,4 +1,4 @@
-var model = require("../ideal_model");
+var model = require("../model");
 
 module.exports = function(app, passport) {
 

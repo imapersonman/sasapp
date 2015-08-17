@@ -1,17 +1,14 @@
-DELIMITER //
-
 CREATE PROCEDURE FindUserForGoogle
 (IN p_google_id VARCHAR(128))
 BEGIN
-    SELECT name, email, google_id, token FROM users
-    WHERE google_id = p_google_id;
-END
+    SELECT name, email, google_id, token FROM users WHERE google_id = p_google_id;
+END;
 
 CREATE PROCEDURE FindUserByEmail
 (IN p_email VARCHAR(128))
-    SELECT name, email, google_id, token FROM users
-    WHERE email = p_email;
-END
+BEGIN
+    SELECT name, email, google_id, token FROM users WHERE email = p_email;
+END;
 
 CREATE PROCEDURE FirstLogin
 (IN p_google_id VARCHAR(128), p_token VARCHAR(128), p_email VARCHAR(128))
@@ -20,13 +17,13 @@ BEGIN
     UPDATE users SET google_id = p_google_id, token = p_token
     WHERE email = p_email;
     COMMIT;
-END
+END;
 
 CREATE PROCEDURE FindAllUsers
 ()
 BEGIN
     SELECT id, name, type FROM users;
-END
+END;
 
 CREATE PROCEDURE FindStudentsForClass
 (IN p_class_id INTEGER)
@@ -34,14 +31,14 @@ BEGIN
     SELECT id, name, email FROM student_classes
     JOIN users ON student_classes.student_id = users.id
     WHERE student_classes.class_id = p_class_id;
-END
+END;
 
 CREATE PROCEDURE FindStudentsForTeacher
 (IN p_teacher_id INTEGER)
 BEGIN
     SELECT id, name, email FROM classes
     WHERE teacher_id = p_teacher_id;
-END
+END;
 
 CREATE PROCEDURE FindTeachersForStudent
 (IN p_student_id INTEGER)
@@ -50,7 +47,7 @@ CREATE PROCEDURE FindTeachersForStudent
     JOIN classes ON student_classes.class_id = classes.id
     JOIN users ON classes.teacher_id = users.id
     JOIN sas_classes ON users.id = sas_classes.teacher_id
-END
+END;
 
 CREATE PROCEDURE FindRankingsForStudent
 (IN p_student_id INTEGER)
@@ -59,14 +56,14 @@ CREATE PROCEDURE FindRankingsForStudent
     JOIN sas_classes
     ON sas_requests.sas_teacher_id = sas_classes.teacher_id
     JOIN users ON users.sas_class_id = sas_classes.id
-END
+END;
 
 CREATE PROCEDURE FindRankingsForTeacher
 (IN p_teacher_id INTEGER)
 BEGIN
     SELECT users.name FROM sas_requests
     JOIN users ON sas_requests.id = users.id;
-END
+END;
 
 -- This procedure may not work as intended. Test and update comment.
 CREATE PROCEDURE FindAllStudents
@@ -80,7 +77,7 @@ BEGIN
     LEFT JOIN sas_classes
     ON sas_classes.teacher_id = student_sas_classes.sas_teacher_id
     WHERE users.type = 'student';
-END
+END;
 
 CREATE PROCEDURE FindAllTeachers
 ()
@@ -91,7 +88,7 @@ BEGIN
     LEFT JOIN sas_classes ON users.id = sas_classes.teacher_id
     LEFT JOIN schools ON users.school_id = schools.id
     WHERE users.type = 'teacher';
-END
+END;
 
 CREATE PROCEDURE FindClass
 (IN p_class_id INTEGER)
@@ -101,7 +98,7 @@ BEGIN
     FROM classes
     LEFT JOIN users ON classes.teacher_id = users.id
     WHERE classes.id = p_class_id;
-END
+END;
 
 CREATE PROCEDURE FindAllClasses
 ()
@@ -110,7 +107,7 @@ BEGIN
     users.name AS teacher_name, users.email
     FROM classes
     LEFT JOIN users ON classes.teacher_id = users.id;
-END
+END;
 
 CREATE PROCEDURE FindAllSASClasses
 ()
@@ -119,7 +116,7 @@ BEGIN
     sas_classes.student_cap, users.name AS teacher_name
     FROM sas_classes
     LEFT JOIN users ON sas_classes.teacher_id = users.id;
-END
+END;
 
 CREATE PROCEDURE FindSASClass
 (IN p_teacher_id INTEGER)
@@ -129,7 +126,7 @@ BEGIN
     FROM sas_classes
     LEFT JOIN users ON sas_classes.teacher_id = users.id
     WHERE sas_classes.teacher_id = p_sas_class_id LIMIT 1;
-END
+END;
 
 CREATE PROCEDURE FindStudentsForSASClass
 (IN p_teacher_id INTEGER)
@@ -138,13 +135,13 @@ BEGIN
     FROM student_sas_classes
     JOIN users ON student_sas_classes.student_id = users.id
     WHERE student_sas_classes.sas_teacher_id = p_teacher_id;
-END
+END;
 
 CREATE PROCEDURE FindAllSchools
 ()
 BEGIN
     SELECT id, name, sas_name FROM schools;
-END
+END;
 
 CREATE PROCEDURE AddStudent
 (IN p_name VARCHAR(128), IN p_email VARCHAR(128))
@@ -153,7 +150,7 @@ BEGIN
     INSERT INTO users (name, email, type)
     VALUES(p_name, p_email, 'student');
     COMMIT;
-END
+END;
 
 CREATE PROCEDURE AddTeacher
 (IN p_name VARCHAR(128),
@@ -164,7 +161,7 @@ BEGIN
     INSERT INTO sas_classes(teacher_id, room_num, student_cap)
     VALUES(LAST_INSERT_ID(), p_room_num, 20);
     COMMIT;
-END
+END;
 
 CREATE PROCEDURE AddClass
 (IN p_name VARCHAR(128), IN p_room_num VARCHAR(16), IN p_period INTEGER)
@@ -173,7 +170,7 @@ BEGIN
     INSERT INTO classes (name, room_num, period)
     VALUES (p_name, p_room_num, p_period);
     COMMIT;
-END
+END;
 
 CREATE PROCEDURE AddSchool
 (IN p_name VARCHAR(128), IN p_sas_name VARCHAR(128))
@@ -181,7 +178,7 @@ BEGIN
     START TRANSACTION;
     INSERT INTO schools (name, sas_name) VALUES (p_name, p_sas_name);
     COMMIT;
-END
+END;
 
 CREATE PROCEDURE AddStudentToClass
 (IN p_class_id INTEGER, IN p_student_id INTEGER)
@@ -190,7 +187,7 @@ BEGIN
     INSERT INTO student_classes (class_id, student_id)
     VALUES(p_class_id, p_student_id);
     COMMIT;
-END
+END;
 
 CREATE PROCEDURE AddSASRequest
 (IN p_student_id INTEGER, IN p_teacher_id INTEGER, IN p_rank INTEGER)
@@ -200,7 +197,7 @@ BEGIN
     (student_id, sas_teacher_id, rank, timestamp)
     VALUES (p_student_id, p_teache_id, p_rank, NOW());
     COMMIT;
-END
+END;
 
 CREATE PROCEDURE UpdateUserName
 (IN p_student_id INTEGER, IN p_student_name VARCHAR(128))
@@ -208,7 +205,7 @@ BEGIN
     START TRANSACTION;
     UPDATE users SET name = p_student_name WHERE id = p_student_id;
     COMMIT;
-END
+END;
 
 CREATE PROCEDURE UpdateUserEmail
 (IN p_student_id INTEGER, IN p_student_email VARCHAR(128))
@@ -216,7 +213,7 @@ BEGIN
     START TRANSACTION;
     UPDATE users SET email = p_student_email WHERE id = p_student_id;
     COMMIT;
-END
+END;
 
 CREATE PROCEDURE UpdateUserSchool
 (IN p_student_id INTEGER, IN p_student_school_id INTEGER)
@@ -225,7 +222,7 @@ BEGIN
     UPDATE users SET school_id = p_student_school_id
     WHERE id = p_student_id;
     COMMIT;
-END
+END;
 
 CREATE PROCEDURE UpdateTeacherRoom
 (IN p_teacher_id INTEGER, IN p_teacher_room VARCHAR(128))
@@ -234,7 +231,7 @@ BEGIN
     UPDATE sas_classes SET room_num = p_teacher_room
     WHERE teacher_id = p_teacher_id;
     COMMIT;
-END
+END;
 
 CREATE PROCEDURE UpdateClassName
 (IN p_class_id INTEGER, IN p_class_name VARCHAR(128))
@@ -243,7 +240,7 @@ BEGIN
     UPDATE classes SET name = p_class_name
     WHERE id = p_class_id;
     COMMIT;
-END
+END;
 
 CREATE PROCEDURE UpdateClassRoom
 (IN p_class_id INTEGER, IN p_class_room_num VARCHAR(16))
@@ -252,7 +249,7 @@ BEGIN
     UPDATE classes SET room_num = p_class_room_num
     WHERE id = p_class_id;
     COMMIT;
-END
+END;
 
 CREATE PROCEDURE UpdateClassPeriod
 (IN p_class_id INTEGER, IN p_class_period INTEGER)
@@ -261,7 +258,7 @@ BEGIN
     UPDATE classes SET period = p_class_period
     WHERE id = p_class_id;
     COMMIT;
-END
+END;
 
 CREATE PROCEDURE UpdateSchoolName
 (IN p_school_id INTEGER, IN p_school_name VARCHAR(128))
@@ -270,7 +267,7 @@ BEGIN
     UPDATE schools SET name = p_school_name
     WHERE id = p_school_id;
     COMMIT;
-END
+END;
 
 CREATE PROCEDURE UpdateSchoolSASName
 (IN p_school_id INTEGER, IN p_school_sas_name VARCHAR(128))
@@ -279,7 +276,7 @@ BEGIN
     UPDATE schools SET sas_name = p_school_sas_name
     WHERE id = p_school_id;
     COMMIT;
-END
+END;
 
 CREATE PROCEDURE UpdateClassTeacher
 (IN p_class_id INTEGER, IN p_teacher_id INTEGER)
@@ -288,7 +285,7 @@ BEGIN
     UPDATE classes SET teacher_id = p_teacher_id
     WHERE id = p_class_id;
     COMMIT;
-END
+END;
 
 CREATE PROCEDURE RemoveStudent
 (IN p_student_id INTEGER)
@@ -298,7 +295,7 @@ BEGIN
     WHERE id = p_student_id
     AND type = 'student'; -- Just in case.
     COMMIT;
-END
+END;
 
 CREATE PROCEDURE RemoveTeacher
 (IN p_teacher_id INTEGER)
@@ -309,7 +306,7 @@ BEGIN
     UPDATE sas_classes SET deleted = TRUE
     WHERE teacher_id = p_teacher_id;
     COMMIT;
-END
+END;
 
 CREATE PROCEDURE RemoveClass
 (IN p_class_id INTEGER)
@@ -317,7 +314,7 @@ BEGIN
     START TRANSACTION;
     UPDATE classes SET deleted = TRUE WHERE id = p_class_id;
     COMMIT;
-END
+END;
 
 CREATE PROCEDURE RemoveSchool
 (IN p_school_id INTEGER)
@@ -325,7 +322,7 @@ BEGIN
     START TRANSACTION
     UPDATE schools SET deleted = TRUE WHERE id = p_school_id;
     COMMIT;
-END
+END;
 
 CREATE PROCEDURE RemoveStudentFromClass
 (IN p_class_id INTEGER)
@@ -334,6 +331,4 @@ BEGIN
     UPDATE student_sas_classes SET deleted = TRUE
     WHERE id = p_class_id;
     COMMIT;
-END
-
-DELIMITER ;
+END;

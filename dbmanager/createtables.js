@@ -4,6 +4,9 @@ var file = "tables.txt";
 if (arg == "ideal") {
     console.log("Building ideal database.");
     file = "ideal_schema.sql";
+} else if (arg == "new") {
+    console.log("Building new database.");
+    file = "new_schema.sql";
 } else {
     console.log("Building non-ideal database.");
 }

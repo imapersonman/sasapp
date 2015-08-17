@@ -1,8 +1,9 @@
 var mysql = require("mysql");
 var config = require("../config/database");
 config.connectionLimit = 20;
-var pool = mysql.createConnection(config);
-var helper = require("model_helpers");
+config.multipleStatementst = true;
+var pool = mysql.createPool(config);
+var helper = require("./model_helpers");
 
 exports.findUserForGoogle = function(google_id, callback) {
     var esc_google_id = mysql.escape(google_id);
@@ -118,7 +119,7 @@ exports.findAllSchools = function(callback) {
 
 // TODO(koissi): Add ability to build procedure call queries.
 // TODO(koissi): Enable multi-statement queries.
-exports.addStudents(added, callback) {
+exports.addStudents = function(added, callback) {
     var proc_name = "AddStudent";
     var query = "";
     for (var a = 0; a < added.length; a++) {
@@ -129,7 +130,7 @@ exports.addStudents(added, callback) {
     helper.query(query, pool, callback);
 };
 
-exports.addTeachers(added, callback) {
+exports.addTeachers = function(added, callback) {
     var proc_name = "AddTeacher";
     var query = "";
     for (var a = 0; a < added.length; a++) {
@@ -140,7 +141,7 @@ exports.addTeachers(added, callback) {
     helper.query(query, pool, callback);
 };
 
-exports.addClasses(c_name, c_room_num, c_period, callback) {
+exports.addClasses = function(added, callback) {
     var proc_name = "AddClass";
     var query = "";
     for (var a = 0; a < added.length; a++) {
@@ -151,7 +152,7 @@ exports.addClasses(c_name, c_room_num, c_period, callback) {
     helper.query(query, pool, callback);
 };
 
-exports.addSchools(added, callback) {
+exports.addSchools = function(added, callback) {
     var proc_name = "AddSchool";
     var query = "";
     for (var a = 0; a < added.length; a++) {
@@ -163,7 +164,7 @@ exports.addSchools(added, callback) {
 };
 
 // TODO(koissi): Rewrite to reflect Proc SAS Schema
-exports.addStudentsToClass(class_id, added, callback) {
+exports.addStudentsToClass = function(class_id, added, callback) {
     var proc_name = "AddStudentToClass";
     var query = "";
     for (var a = 0; a < added.length; a++) {
@@ -216,7 +217,7 @@ exports.updateStudents = function(updates, callback) {
     helper.query(query, pool, callback);
 };
 
-exorts.updateTeachers = function(updates, callback) {
+exports.updateTeachers = function(updates, callback) {
     var proc_name_n = "UpdateUserName";
     var proc_name_e = "UpdateUserEmail";
     var proc_name_s = "UpdateUserSchool";
