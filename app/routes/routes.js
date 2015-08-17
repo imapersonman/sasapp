@@ -243,132 +243,24 @@ module.exports = function(app, passport) {
     // This form should not be needed in the future.  If all goes well all the information
     // on individual classes will be taken from external sources supplied by the district.
     // Teachers do not be edited on the individual or batch level.
-    app.post("/model/update/teacher", isLoggedIn, isAdmin, function(request, response) {
-        var editedTeachers = (request.body.editedTeachers) ? JSON.parse(request.body.editedTeachers) : [];
-        var addedTeachers = (request.body.addedTeachers) ? JSON.parse(request.body.addedTeachers) : [];
-        var removedTeachers = (request.body.removedTeachers) ? JSON.parse(request.body.removedTeachers) : [];
+    app.post("/model/edit/:field", isLoggedIn, isAdmin, function(request, response) {
+        var edited = (request.body.edited) ? JSON.parse(request.body.edited) : [];
+        var added = (request.body.added) ? JSON.parse(request.body.added) : [];
+        var removed = (request.body.removed) ? JSON.parse(request.body.removed) : [];
+        var field = request.params.field;
         var disp_messages = [];
-        if (Object.keys(editedTeachers).length > 0) {
+        if (Object.keys(edited).length > 0) {
             model.updateTeachers(editedTeachers, function(messages) {
                 // Something
             });
         }
-        if (Object.keys(addedTeachers).length > 0) {
+        if (Object.keys(added).length > 0) {
             model.addUsers(addedTeachers, function(messages) {
                 // Something
             });
         }
-        if (Object.keys(removedTeachers).length > 0) {
+        if (Object.keys(removed).length > 0) {
             model.removeUsers(removedTeachers, function(messages) {
-                // Something
-            });
-        }
-        response.send(disp_messages);
-    });
-
-    // This form should not be needed in the future.  If all goes well all the information
-    // on individual classes will be taken from external sources supplied by the district.
-    // Classes do not be edited on the individual or batch level.
-    app.post("/model/update/student", isLoggedIn, isAdmin, function(request, response) {
-        var editedStudents = (request.body.editedStudents) ? JSON.parse(request.body.editedStudents) : null;
-        var addedStudents = (request.body.addedStudents) ? JSON.parse(request.body.addedStudents) : null;
-        var removedStudents = (request.body.removedStudents) ? JSON.parse(request.body.removedStudents) : null;
-        var disp_messages = [];
-        if (Object.keys(editedStudents).length > 0) {
-            model.updateStudents(editedStudents, function(messages) {
-                disp_messages.push("Something went wrong with the server.")
-                disp_messages.concat(messages);
-            });
-        }
-        if (Object.keys(addedStudents).length > 0) {
-            model.addUsers(addedStudents, function(messages) {
-                    disp_messages.push("Something went wrong with the server.")
-                    disp_messages.concat(messages);
-            });
-        }
-        if (Object.keys(removedStudents).length > 0) {
-            model.removeUsers(removedStudents, function(error, messages) {
-                if (error) {
-                    disp_messages.push("Something went wrong with the server.")
-                    disp_messages.concat(messages);
-                }
-            });
-        }
-        response.send(disp_messages);
-    });
-
-    // This form should not be needed in the future.  If all goes well all the information
-    // on individual classes will be taken from external sources supplied by the district.
-    // Classes do not be edited on the individual or batch level.
-    app.post("/model/update/class", isLoggedIn, isAdmin, function(request, response) {
-        var editedClasses = (request.body.editedClasses) ? JSON.parse(request.body.editedClasses) : null;
-        var addedClasses = (request.body.addedClasses) ? JSON.parse(request.body.addedClasses) : null;
-        var removedClasses = (request.body.removedClasses) ? JSON.parse(request.body.removedClasses) : null;
-        var disp_messages = [];
-        if (Object.keys(editedClasses).length > 0) {
-            model.updateClasses(editedClasses, function(messages) {
-                disp_messages.push("Something went wrong with the server.")
-                disp_messages.concat(messages);
-            });
-        }
-        if (Object.keys(addedClasses).length > 0) {
-            model.addClasses(addedClasses, function(messages) {
-                disp_messages.push("Something went wrong with the server.")
-                disp_messages.concat(messages);
-            });
-        }
-        if (Object.keys(removedClasses).length > 0) {
-            model.removeClasses(removedClasses, function(messages) {
-                disp_messages.push("Something went wrong with the server.")
-                disp_messages.concat(messages);
-            });
-        }
-        response.send(disp_messages);
-    });
-
-    app.post("/model/update/sas_class", isLoggedIn, isAdmin, function(request, response) {
-        var editedClasses = (request.body.editedClasses) ? JSON.parse(request.body.editedClasses) : null 
-        var addedClasses = (request.body.addedClasses) ? JSON.parse(request.body.addedClasses) : null 
-        var removedClasses = (request.body.removedClasses) ? JSON.parse(request.body.removedClasses) : null;
-        var disp_messages = [];
-        if (Object.keys(editedClasses).length > 0) {
-            model.updateSASClasses(editedClasses, function(messages) {
-                disp_messages.push("Something went wrong with the server.")
-                disp_messages.concat(messages);
-            });
-        }
-        if (Object.keys(addedClasses).length > 0) {
-            model.addSASClasses(addedClasses, function(messages) {
-                disp_messages.push("Something went wrong with the server.")
-                disp_messages.concat(messages);
-            });
-        }
-        if (Object.keys(removedClasses).length > 0) {
-            model.removeSASClasses(removedClasses, function(messages) {
-                disp_messages.push("Something went wrong with the server.")
-                disp_messages.concat(messages);
-            });
-        }
-        response.send(disp_messages);
-    });
-
-    app.post("/model/update/schools", isLoggedIn, isAdmin, function(request, response) {
-        var editedTeachers = (request.body.editedTeachers) ? JSON.parse(request.body.editedTeachers) : [];
-        var addedTeachers = (request.body.addedTeachers) ? JSON.parse(request.body.addedTeachers) : [];
-        var removedTeachers = (request.body.removedTeachers) ? JSON.parse(request.body.removedTeachers) : [];
-        var disp_messages = [];
-        if (Object.keys(editedTeachers).length > 0) {
-            model.updateSchools(editedTeachers, function(messages) {
-                // Something
-            });
-        }
-        if (Object.keys(addedTeachers).length > 0) {
-            model.addSchools(addedTeachers, function(messages) {
-                // Something
-            });
-        }
-        if (Object.keys(removedTeachers).length > 0) {
-            model.removeSchools(removedTeachers, function(messages) {
                 // Something
             });
         }

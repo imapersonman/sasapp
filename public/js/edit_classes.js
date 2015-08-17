@@ -1,9 +1,5 @@
 $(document).ready(function() {
 
-    $(document).ajaxComplete(function(event, request, settings) {
-        $('#loading-indicator').hide();
-    });
-
     var old_value = "";
     var new_value = "";
     $("tbody.editable-list tr td input").blur(function() {
