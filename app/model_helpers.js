@@ -204,14 +204,13 @@ exports.query = function(query, pool, callback) {
         if (error) throw error;
         connection.query(query, function(error, results) {
             // TODO(koissi) Cleanup debug
-            if (error) throw error;
-            callback(results);
+            callback(error, results);
         });
     });
 };
 
 exports.runProc = function(proc_name, params, pool, callback) {
-    var query = buildProcQuery(proc_name, params, pool, callback);
+    var query = exports.buildProcQuery(proc_name, params, pool, callback);
     exports.query(query, pool, callback);
 };
 

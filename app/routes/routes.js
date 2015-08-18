@@ -17,7 +17,6 @@ module.exports = function(app, passport) {
             object.page = "dashboard";
             page_type = "admin";
         } else {
-            console.log("I don't get it");
             page_type = "user";
             if (type == "student") {
                 object.title = "Student Dashboard";
@@ -29,6 +28,7 @@ module.exports = function(app, passport) {
                 response.redirect("/");
             }
         }
+        console.log("Object: " + JSON.stringify(object));
         response.render(page_type, object);
     });
 

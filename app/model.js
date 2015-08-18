@@ -8,16 +8,16 @@ var helper = require("./model_helpers");
 exports.findUserForGoogle = function(google_id, callback) {
     var esc_google_id = mysql.escape(google_id);
     var query = "CALL FindUserForGoogle(" + esc_google_id + ");";
-    helper.query(query, pool, function(results) {
-        callback(results[0]);
+    helper.query(query, pool, function(error, results) {
+        callback(error, results[0][0]);
     });
 };
 
 exports.findUserByEmail = function(email, callback) {
     var esc_email = mysql.escape(email);
     var query = "CALL FindUserByEmail(" + esc_email + ");";
-    helper.query(query, pool, function(results) {
-        callback(results[0]);
+    helper.query(query, pool, function(error, results) {
+        callback(error, results[0][0]);
     });
 };
 
@@ -28,12 +28,12 @@ exports.firstLogin = function(google_id, token, email, callback) {
     var query = "CALL FirstLogin("   + esc_google_id + ", "
                                 + esc_token + ", "
                                 + esc_email + ");";
-    helper.query(query, pool, function(results) {
+    helper.query(query, pool, function(error, results) {
         var user = {};
         user.google_id = google_id;
         user.token = token;
         user.email = email;
-        callback(user);
+        callback(error, user);
     });
 };
 
