@@ -4,7 +4,7 @@ DROP PROCEDURE IF EXISTS FindUserForGoogle//
 CREATE PROCEDURE FindUserForGoogle
 (IN p_google_id VARCHAR(128))
 BEGIN
-    SELECT name, email, google_id, token FROM users WHERE google_id = p_google_id;
+    SELECT * FROM users WHERE google_id = p_google_id;
 END//
 
 
