@@ -76,6 +76,7 @@ BEGIN
     ON student_sas_classes.student_id = users.id
     LEFT JOIN sas_classes
     ON sas_classes.teacher_id = student_sas_classes.sas_teacher_id
+    LEFT JOIN schools ON schools.id = users.school_id
     WHERE users.type = 'student';
 END;
 

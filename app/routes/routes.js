@@ -28,7 +28,6 @@ module.exports = function(app, passport) {
                 response.redirect("/");
             }
         }
-        console.log("Object: " + JSON.stringify(object));
         response.render(page_type, object);
     });
 
@@ -121,7 +120,7 @@ module.exports = function(app, passport) {
     });
 
     app.get("/user/students", isLoggedIn, isAdmin, function(request, response) {
-        model.findAllStudents(function(studentList) {
+        model.findAllStudents(function(error, studentList) {
             var studentList = (studentList) ? studentList : [];
             var object = {
                 page: "students",
@@ -248,19 +247,45 @@ module.exports = function(app, passport) {
         var added = (request.body.added) ? JSON.parse(request.body.added) : [];
         var removed = (request.body.removed) ? JSON.parse(request.body.removed) : [];
         var field = request.params.field;
+        console.log("Field: " + field);
         var disp_messages = [];
+        var update_function = null;
+        var add_function = null;
+        var remove_function = null;
+        // This can be further factored with the user of an array of editable objects.
+        // Do later.
+        if (field == "teachers") {
+            update_function = model.updateTeachers;
+            add_function = model.addTeachers;
+            remove_function = model.removeTeachers;
+        } else if (field == "students") {
+            update_function = model.updateStudents;
+            add_function = model.addStudents;
+            remove_function = model.removeStudents;
+        } else if (field == "classes") {
+            update_function = model.updateClasses;
+            add_function = model.addClasses;
+            remove_function = model.removeClasses;
+        } else if (field == "schools") {
+            update_function = model.updateSchools;
+            add_function = model.addSchools;
+            remove_function = model.model.removeSchools;
+        } else {
+            // The field is not recognized, do something.
+            response.redirect("/");
+        }
         if (Object.keys(edited).length > 0) {
-            model.updateTeachers(editedTeachers, function(messages) {
+            update_function(edited, function(messages) {
                 // Something
             });
         }
         if (Object.keys(added).length > 0) {
-            model.addUsers(addedTeachers, function(messages) {
+            add_function(added, function(messages) {
                 // Something
             });
         }
         if (Object.keys(removed).length > 0) {
-            model.removeUsers(removedTeachers, function(messages) {
+            remove_function(removed, function(messages) {
                 // Something
             });
         }

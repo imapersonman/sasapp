@@ -9,7 +9,7 @@ exports.findUserForGoogle = function(google_id, callback) {
     var esc_google_id = mysql.escape(google_id);
     var query = "CALL FindUserForGoogle(" + esc_google_id + ");";
     helper.query(query, pool, function(error, results) {
-        callback(error, results[0][0]);
+        callback(error, results[0]);
     });
 };
 
@@ -17,7 +17,7 @@ exports.findUserByEmail = function(email, callback) {
     var esc_email = mysql.escape(email);
     var query = "CALL FindUserByEmail(" + esc_email + ");";
     helper.query(query, pool, function(error, results) {
-        callback(error, results[0][0]);
+        callback(error, results[0]);
     });
 };
 
