@@ -2,10 +2,10 @@
 <script>setInitialRowSize(<%- students.length - 1 %>)</script>
 
 <div id="row-template">
-    <td><input class="form-control" type="text" value="Name"></td>
-    <td><input class="form-control" type="text" value="Email"></td>
-    <td>Room Number</td>
-    <td>School</td>
+    <div field="name"><input class="form-control" type="text" value="Name"></div>
+    <div field="email"><input class="form-control" type="text" value="Email"></div>
+    <div field="room_num">Room Number</div>
+    <div field="school">School</div>
 </div>
 
 <div class="panel panel-default scrollable">

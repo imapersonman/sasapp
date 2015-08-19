@@ -136,8 +136,8 @@ module.exports = function(app, passport) {
     // on individual classes will be taken from external sources supplied by the district.
     // Students do not be edited on the individual or batch level.
     app.get("/user/students/edit", isLoggedIn, isAdmin, function(request, response) {
-        model.findAllSchools(function(schools) {
-            model.findAllStudents(function(studentList) {
+        model.findAllSchools(function(error, schools) {
+            model.findAllStudents(function(error, studentList) {
                 var studentList = (studentList) ? studentList : [];
                 var object = {
                     page: "edit_students",
@@ -152,15 +152,18 @@ module.exports = function(app, passport) {
     });
 
     app.get("/user/teachers", isLoggedIn, isAdmin, function(request, response) {
-        model.findAllTeachers(function(teacherList) {
-            var teacherList = (teacherList) ? teacherList : [];
-            var object = {
-                page: "teachers",
-                title: "View Teachers",
-                user: request.user,
-                teachers: teacherList
-            };
-            response.render("admin", object);
+        model.findAllSchools(function(error, schools) {
+            model.findAllTeachers(function(error, teacherList) {
+                var teacherList = (teacherList) ? teacherList : [];
+                var object = {
+                    page: "teachers",
+                    title: "View Teachers",
+                    user: request.user,
+                    teachers: teacherList,
+                    schools: schools
+                };
+                response.render("admin", object);
+            });
         });
     });
 
@@ -243,11 +246,10 @@ module.exports = function(app, passport) {
     // on individual classes will be taken from external sources supplied by the district.
     // Teachers do not be edited on the individual or batch level.
     app.post("/model/edit/:field", isLoggedIn, isAdmin, function(request, response) {
-        var edited = (request.body.edited) ? JSON.parse(request.body.edited) : [];
-        var added = (request.body.added) ? JSON.parse(request.body.added) : [];
-        var removed = (request.body.removed) ? JSON.parse(request.body.removed) : [];
+        var edited = (request.body.edited) ? JSON.parse(request.body.edited) : null;
+        var added = (request.body.added) ? JSON.parse(request.body.added) : null;
+        var removed = (request.body.removed) ? JSON.parse(request.body.removed) : null;
         var field = request.params.field;
-        console.log("Field: " + field);
         var disp_messages = [];
         var update_function = null;
         var add_function = null;
@@ -275,17 +277,17 @@ module.exports = function(app, passport) {
             response.redirect("/");
         }
         if (Object.keys(edited).length > 0) {
-            update_function(edited, function(messages) {
+            update_function(edited, function(error, messages) {
                 // Something
             });
         }
         if (Object.keys(added).length > 0) {
-            add_function(added, function(messages) {
+            add_function(added, function(error, messages) {
                 // Something
             });
         }
-        if (Object.keys(removed).length > 0) {
-            remove_function(removed, function(messages) {
+        if (Object.keys(removed).length) {
+            remove_function(removed, function(error, messages) {
                 // Something
             });
         }
