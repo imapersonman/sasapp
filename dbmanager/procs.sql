@@ -12,7 +12,8 @@ DROP PROCEDURE IF EXISTS FindUserByEmail//
 CREATE PROCEDURE FindUserByEmail
 (IN p_email VARCHAR(128))
 BEGIN
-    SELECT name, email, google_id, token FROM users WHERE email = p_email;
+    SELECT name, email, google_id, token FROM users WHERE email = p_email
+    AND deleted = 0;
 END//
 
 DROP PROCEDURE IF EXISTS FirstLogin//
@@ -91,6 +92,7 @@ BEGIN
     ON student_sas_classes.student_id = users.id
     LEFT JOIN sas_classes
     ON sas_classes.teacher_id = student_sas_classes.sas_teacher_id
+    LEFT JOIN schools ON schools.id = users.school_id
     WHERE users.type = 'student';
 END//
 
@@ -333,6 +335,7 @@ BEGIN
     UPDATE users SET deleted = TRUE
     WHERE id = p_student_id
     AND type = 'student'; -- Just in case.
+    DELETE FROM users WHERE id = p_student_id;
     COMMIT;
 END//
 
@@ -345,6 +348,8 @@ BEGIN
     AND type = 'teacher';
     UPDATE sas_classes SET deleted = TRUE
     WHERE teacher_id = p_teacher_id;
+    DELETE FROM users WHERE id = p_teacher_id;
+    DELETE FROM sas_classes WHERE teacher_id = p_teacher_id;
     COMMIT;
 END//
 
@@ -354,6 +359,7 @@ CREATE PROCEDURE RemoveClass
 BEGIN
     START TRANSACTION;
     UPDATE classes SET deleted = TRUE WHERE id = p_class_id;
+    DELETE FROM classes WHERE id = p_class_id;
     COMMIT;
 END//
 
@@ -363,6 +369,7 @@ CREATE PROCEDURE RemoveSchool
 BEGIN
     START TRANSACTION;
     UPDATE schools SET deleted = 1 WHERE id = p_school_id;
+    DELETE FROM schools WHERE id = p_school_id;
     COMMIT;
 END//
 
@@ -372,7 +379,8 @@ CREATE PROCEDURE RemoveStudentFromClass
 BEGIN
     START TRANSACTION;
     UPDATE student_sas_classes SET deleted = 1
-    WHERE id = p_class_id;
+    WHERE class_id = p_class_id;
+    DELETE FROM student_sas_classes WHERE class_id = p_class_id;
     COMMIT;
 END//
 

@@ -130,6 +130,7 @@ exports.processQueryError = function(error, query) {
     if (error) {
         exports.log(error, "error");
         exports.log(query, "query");
+        process.exit();
     }
 }
 
@@ -204,23 +205,24 @@ exports.query = function(query, pool, callback) {
         if (error) throw error;
         connection.query(query, function(error, results) {
             // TODO(koissi) Cleanup debug
-            if (error) throw error;
-            callback(results);
+            exports.processQueryError(error, query);
+            callback(error, results[0]);
         });
     });
 };
 
 exports.runProc = function(proc_name, params, pool, callback) {
-    var query = buildProcQuery(proc_name, params, pool, callback);
+    var query = exports.buildProcQuery(proc_name, params);
     exports.query(query, pool, callback);
 };
 
-exports.buildProcQuery = function(proc_name, params) {
+exports.buildProcQuery = function(proc_name, params, pool) {
     var query = "CALL " + proc_name + "(";
     for (var p = 0; p < params.length; p++) {
         query += pool.escape(params[p]);
         if (p < params.length - 1) query += ",";
     }
+    query += ");";
     return query;
 };
 

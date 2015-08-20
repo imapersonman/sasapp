@@ -17,7 +17,6 @@ module.exports = function(app, passport) {
             object.page = "dashboard";
             page_type = "admin";
         } else {
-            console.log("I don't get it");
             page_type = "user";
             if (type == "student") {
                 object.title = "Student Dashboard";
@@ -33,7 +32,7 @@ module.exports = function(app, passport) {
     });
 
     app.get("/user/classes", isLoggedIn, isAdmin, function(request, response) {
-        model.findAllClasses(function(classList) {
+        model.findAllClasses(function(error, classList) {
             var realClassList = (classList == null) ? [] : classList;
             var object = {
                 page: "classes",
@@ -49,7 +48,7 @@ module.exports = function(app, passport) {
     // on individual classes will be taken from external sources supplied by the district.
     // Classes do not be edited on the individual or batch level.
     app.get("/user/classes/edit", isLoggedIn, isAdmin, function(request, response) {
-        model.findAllClasses(function(classList) {
+        model.findAllClasses(function(error, classList) {
             var realClassList = (classList == null) ? [] : classList;
             var object = {
                 page: "edit_classes",
@@ -121,7 +120,7 @@ module.exports = function(app, passport) {
     });
 
     app.get("/user/students", isLoggedIn, isAdmin, function(request, response) {
-        model.findAllStudents(function(studentList) {
+        model.findAllStudents(function(error, studentList) {
             var studentList = (studentList) ? studentList : [];
             var object = {
                 page: "students",
@@ -137,8 +136,8 @@ module.exports = function(app, passport) {
     // on individual classes will be taken from external sources supplied by the district.
     // Students do not be edited on the individual or batch level.
     app.get("/user/students/edit", isLoggedIn, isAdmin, function(request, response) {
-        model.findAllSchools(function(schools) {
-            model.findAllStudents(function(studentList) {
+        model.findAllSchools(function(error, schools) {
+            model.findAllStudents(function(error, studentList) {
                 var studentList = (studentList) ? studentList : [];
                 var object = {
                     page: "edit_students",
@@ -153,15 +152,18 @@ module.exports = function(app, passport) {
     });
 
     app.get("/user/teachers", isLoggedIn, isAdmin, function(request, response) {
-        model.findAllTeachers(function(teacherList) {
-            var teacherList = (teacherList) ? teacherList : [];
-            var object = {
-                page: "teachers",
-                title: "View Teachers",
-                user: request.user,
-                teachers: teacherList
-            };
-            response.render("admin", object);
+        model.findAllSchools(function(error, schools) {
+            model.findAllTeachers(function(error, teacherList) {
+                var teacherList = (teacherList) ? teacherList : [];
+                var object = {
+                    page: "teachers",
+                    title: "View Teachers",
+                    user: request.user,
+                    teachers: teacherList,
+                    schools: schools
+                };
+                response.render("admin", object);
+            });
         });
     });
 
@@ -244,23 +246,50 @@ module.exports = function(app, passport) {
     // on individual classes will be taken from external sources supplied by the district.
     // Teachers do not be edited on the individual or batch level.
     app.post("/model/edit/:field", isLoggedIn, isAdmin, function(request, response) {
-        var edited = (request.body.edited) ? JSON.parse(request.body.edited) : [];
-        var added = (request.body.added) ? JSON.parse(request.body.added) : [];
-        var removed = (request.body.removed) ? JSON.parse(request.body.removed) : [];
+        var edited = (request.body.edited) ? JSON.parse(request.body.edited) : null;
+        var added = (request.body.added) ? JSON.parse(request.body.added) : null;
+        var removed = (request.body.removed) ? JSON.parse(request.body.removed) : null;
         var field = request.params.field;
         var disp_messages = [];
+        var update_function = null;
+        var add_function = null;
+        var remove_function = null;
+        // This can be further factored with the user of an array of editable objects.
+        // Do later.
+        if (field == "teachers") {
+            update_function = model.updateTeachers;
+            add_function = model.addTeachers;
+            remove_function = model.removeTeachers;
+        } else if (field == "students") {
+            update_function = model.updateStudents;
+            add_function = model.addStudents;
+            remove_function = model.removeStudents;
+        } else if (field == "classes") {
+            update_function = model.updateClasses;
+            add_function = model.addClasses;
+            remove_function = model.removeClasses;
+        } else if (field == "schools") {
+            update_function = model.updateSchools;
+            add_function = model.addSchools;
+            remove_function = model.model.removeSchools;
+        } else {
+            // The field is not recognized, do something.
+            response.redirect("/");
+        }
         if (Object.keys(edited).length > 0) {
-            model.updateTeachers(editedTeachers, function(messages) {
+            update_function(edited, function(error, messages) {
                 // Something
             });
         }
         if (Object.keys(added).length > 0) {
-            model.addUsers(addedTeachers, function(messages) {
+            console.log("Adding");
+            add_function(added, function(error, messages) {
                 // Something
             });
         }
-        if (Object.keys(removed).length > 0) {
-            model.removeUsers(removedTeachers, function(messages) {
+        if (Object.keys(removed).length) {
+            console.log("Removing");
+            remove_function(removed, function(error, messages) {
                 // Something
             });
         }

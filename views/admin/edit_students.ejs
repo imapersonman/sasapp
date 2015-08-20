@@ -2,10 +2,10 @@
 <script>setInitialRowSize(<%- students.length - 1 %>)</script>
 
 <div id="row-template">
-    <td><input class="form-control" type="text" value="Name"></td>
-    <td><input class="form-control" type="text" value="Email"></td>
-    <td>Room Number</td>
-    <td>School</td>
+    <div field="name"><input class="form-control" type="text" value="Name"></div>
+    <div field="email"><input class="form-control" type="text" value="Email"></div>
+    <div field="room_num">Room Number</div>
+    <div field="school">School</div>
 </div>
 
 <div class="panel panel-default scrollable">
@@ -24,18 +24,7 @@
                 <td><input class="form-control" type="text" value=<%- "'" + students[s].name + "'" %>></td>
                 <td><input class="form-control" type="text" value=<%= students[s].email %>></td>
                 <td><%= students[s].room_num %></td>
-                <td>
-                    <select id="school-select">
-                        <% if (students[s].school_name) { %>
-                        <option value=<%= students[s].school_id %>><%= students[s].school_name %></option>
-                        <% } else { %>
-                        <option></option>
-                        <% } %>
-                        <% for (var s = 0; s < schools.length; s++) { %>
-                        <option value=<%= schools[s].id %>><%= schools[s].name %></option>
-                        <% } %>
-                    </select>
-                </td>
+                <td><%= students[s].school_name %></td>
                 <td>
                     <button onclick="removeRow(this)" style="float: right" type="button" class="btn btn-default btn-sm">
                         <span class="glyphicon glyphicon-minus"></span> Remove
