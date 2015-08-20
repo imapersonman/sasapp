@@ -4,7 +4,9 @@ DROP PROCEDURE IF EXISTS FindUserForGoogle//
 CREATE PROCEDURE FindUserForGoogle
 (IN p_google_id VARCHAR(128))
 BEGIN
-    SELECT users.name, users.email, users.google_id, users.token, users.type, schools.name AS school_name, schools.sas_name AS sas_name FROM users LEFT JOIN schools ON schools.id = users.school_id WHERE google_id = p_google_id;
+    SELECT id, name, email, type, google_id, token
+    FROM users
+    WHERE google_id = p_google_id;
 END//
 
 

@@ -7,6 +7,7 @@ module.exports = function(app, passport) {
     });
 
     app.get("/user", isLoggedIn, function(request, response) {
+        console.log("User: " + JSON.stringify(request.user));
         var type = request.user.type;
         var page_type = "";
         var object = {
