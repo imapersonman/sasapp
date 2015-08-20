@@ -7,7 +7,6 @@ module.exports = function(app, passport) {
     });
 
     app.get("/user", isLoggedIn, function(request, response) {
-        console.log("User: " + JSON.stringify(request.user));
         var type = request.user.type;
         var page_type = "";
         var object = {
@@ -257,13 +256,11 @@ module.exports = function(app, passport) {
             });
         }
         if (Object.keys(added).length > 0) {
-            console.log("Adding");
             add_function(added, function(error, messages) {
                 // Something
             });
         }
         if (Object.keys(removed).length) {
-            console.log("Removing");
             remove_function(removed, function(error, messages) {
                 // Something
             });
@@ -275,7 +272,6 @@ module.exports = function(app, passport) {
     // on individual classes will be taken from external sources supplied by the district.
     // Classes do not be edited on the individual or batch level.
     app.post("/model/update/class/students", isLoggedIn, isAdmin, function(request, response) {
-        console.log("received");
         var class_id = request.body.class_id;
         var students = JSON.parse(request.body.students);
         model.addStudentsToClass(class_id, students, function(messages) {
@@ -284,7 +280,6 @@ module.exports = function(app, passport) {
     });
 
     app.post("/model/remove/class/students", isLoggedIn, isAdmin, function(request, response) {
-        console.log("received");
         var class_id = request.body.class_id;
         var students = JSON.parse(request.body.students);
         model.removeStudentsFromClass(class_id, students, function(messages) {
