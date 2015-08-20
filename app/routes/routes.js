@@ -32,7 +32,7 @@ module.exports = function(app, passport) {
     });
 
     app.get("/user/classes", isLoggedIn, isAdmin, function(request, response) {
-        model.findAllClasses(function(classList) {
+        model.findAllClasses(function(error, classList) {
             var realClassList = (classList == null) ? [] : classList;
             var object = {
                 page: "classes",
@@ -48,7 +48,7 @@ module.exports = function(app, passport) {
     // on individual classes will be taken from external sources supplied by the district.
     // Classes do not be edited on the individual or batch level.
     app.get("/user/classes/edit", isLoggedIn, isAdmin, function(request, response) {
-        model.findAllClasses(function(classList) {
+        model.findAllClasses(function(error, classList) {
             var realClassList = (classList == null) ? [] : classList;
             var object = {
                 page: "edit_classes",
@@ -282,11 +282,13 @@ module.exports = function(app, passport) {
             });
         }
         if (Object.keys(added).length > 0) {
+            console.log("Adding");
             add_function(added, function(error, messages) {
                 // Something
             });
         }
         if (Object.keys(removed).length) {
+            console.log("Removing");
             remove_function(removed, function(error, messages) {
                 // Something
             });

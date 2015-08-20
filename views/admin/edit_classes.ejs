@@ -4,9 +4,9 @@
 <!-- Defining the row template -->
 <div id="row-template">
     <div>Teacher</div>
-    <div><input class="form-control" type="text" value="Name"></div>
-    <div><input class="form-control" type="text" value="Room Number"></div>
-    <div><input class="form-control" type="text" value="Period"></div>
+    <div field="name"><input class="form-control" type="text" value="Name"></div>
+    <div field="room_num"><input class="form-control" type="text" value="Room Number"></div>
+    <div field="period"><input class="form-control" type="text" value="Period"></div>
 </div>
 <!-- End -->
 
@@ -22,11 +22,11 @@
         </thead>
         <tbody class="editable-list">
             <% for(var c = 0; c < classes.length; c++) { %>
-            <tr class_id=<%= classes[c].id %> row_index=<%= c %>>
+            <tr id=<%= classes[c].id %> row_index=<%= c %>>
                 <td><%= classes[c].teacher_name %></td>
-                <td><input class="form-control" type="text" value=<%- "'" + classes[c].name + "'" %>></td>
-                <td><input class="form-control" type="text" value=<%= classes[c].room_num %>></td>
-                <td><input class="form-control" type="text" value=<%= classes[c].period %>></td>
+                <td field="name"><input class="form-control" type="text" value=<%- "'" + classes[c].name + "'" %>></td>
+                <td field="room_num"><input class="form-control" type="text" value=<%= classes[c].room_num %>></td>
+                <td field="period"><input class="form-control" type="text" value=<%= classes[c].period %>></td>
                 <td>
                     <button onclick="removeRow(this)" style="float: right" type="button" class="btn btn-default btn-sm">
                         <span class="glyphicon glyphicon-minus"></span> Remove
