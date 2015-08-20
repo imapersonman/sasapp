@@ -20,7 +20,7 @@
         </thead>
         <tbody class="editable-list">
             <% for(var t = 0; t < teachers.length; t++) { %>
-            <tr user_id=<%= teachers[t].id %> row_index=<%= t %>>
+            <tr id =<%= teachers[t].id %> row_index=<%= t %>>
                 <td field="name"><input class="form-control" type="text" value=<%- "'" + teachers[t].name + "'" %>></td>
                 <td field="email"><input class="form-control" type="text" value=<%= teachers[t].email %>></td>
                 <td><%= teachers[t].room_num %></td>
