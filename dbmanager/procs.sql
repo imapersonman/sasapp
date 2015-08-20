@@ -71,7 +71,7 @@ BEGIN
     FROM sas_requests
     JOIN sas_classes
     ON sas_requests.sas_teacher_id = sas_classes.teacher_id
-    JOIN users ON users.sas_class_id = sas_classes.id;
+    JOIN users ON sas_classes.teacher_id = users.id;
 END//
 
 DROP PROCEDURE IF EXISTS FindRankingsForTeacher//
@@ -82,7 +82,6 @@ BEGIN
     JOIN users ON sas_requests.id = users.id;
 END//
 
--- This procedure may not work as intended. Test and update comment.
 DROP PROCEDURE IF EXISTS FindAllStudents//
 CREATE PROCEDURE FindAllStudents
 ()
