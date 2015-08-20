@@ -16,7 +16,7 @@
         </thead>
         <tbody class="editable-list">
             <% for(var c = 0; c < schools.length; c++) { %>
-            <tr a_id=<%= schools[c].id %> row_index=<%= c %>>
+            <tr id=<%= schools[c].id %> row_index=<%= c %>>
                 <td field="name"><input class="form-control" type="text" value=<%- "'" +  schools[c].name + "'" %>></td>
                 <td field="sas_name"><input class="form-control" type="text" value=<%- "'" + schools[c].sas_name + "'" %>></td>
                 <td>

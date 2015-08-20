@@ -4,7 +4,7 @@
 <div id="row-template">
     <div field="name"><input class="form-control" type="text" value="Name"></div>
     <div field="email"><input class="form-control" type="text" value="Email"></div>
-    <div>Room Number</div>
+    <div field="room_num"><input class="form-control" type="text" value="Room Number"></div>
     <div>School</div>
 </div>
 
@@ -20,10 +20,10 @@
         </thead>
         <tbody class="editable-list">
             <% for(var t = 0; t < teachers.length; t++) { %>
-            <tr user_id=<%= teachers[t].id %> row_index=<%= t %>>
+            <tr id =<%= teachers[t].id %> row_index=<%= t %>>
                 <td field="name"><input class="form-control" type="text" value=<%- "'" + teachers[t].name + "'" %>></td>
                 <td field="email"><input class="form-control" type="text" value=<%= teachers[t].email %>></td>
-                <td><%= teachers[t].room_num %></td>
+                <td field="room_num"><input class="form-control" type="text" value=<%= teachers[t].room_num %>></td>
                 <td><%= teachers[t].school_name %></td>
                 <td>
                     <button onclick="removeRow(this)" style="float: right" type="button" class="btn btn-default btn-sm">

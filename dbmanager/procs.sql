@@ -183,7 +183,7 @@ CREATE PROCEDURE AddTeacher
     IN p_email VARCHAR(128), IN p_room_num VARCHAR(16))
 BEGIN
     START TRANSACTION;
-    INSERT INTO users (name, email) VALUES(p_name, p_email);
+    INSERT INTO users (name, email, type) VALUES(p_name, p_email, 'teacher');
     INSERT INTO sas_classes(teacher_id, room_num, student_cap)
     VALUES(LAST_INSERT_ID(), p_room_num, 20);
     COMMIT;

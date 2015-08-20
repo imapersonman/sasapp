@@ -285,7 +285,7 @@ exports.updateSchools = function(updates, callback) {
         var params_s = [id, st.sas_name];
         if (st.name) query += h.buildProcQuery(proc_name_n, params_n, pool);
         if (st.sas_name) query += h.buildProcQuery(proc_name_s, params_s, pool);
-        if (r < updates.length - 1) query += "\n";
+        if (i < updates.length - 1) query += "\n";
     }
     h.query(query, pool, callback);
 };

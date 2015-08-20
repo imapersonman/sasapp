@@ -171,10 +171,10 @@ module.exports = function(app, passport) {
     // on individual classes will be taken from external sources supplied by the district.
     // Teachers do not be edited on the individual or batch level.
     app.get("/user/teachers/edit", isLoggedIn, isAdmin, function(request, response) {
-        model.findAllSchools(function(schools) {
-            model.findAllSASClasses(function(sas_classes) {
+        model.findAllSchools(function(error, schools) {
+            model.findAllSASClasses(function(error, sas_classes) {
                 var sas_classes = (sas_classes) ? sas_classes : [];
-                model.findAllTeachers(function(teacherList) {
+                model.findAllTeachers(function(error, teacherList) {
                     var teacherList = (teacherList) ? teacherList : [];
                     var object = {
                         page: "edit_teachers",
@@ -190,34 +190,8 @@ module.exports = function(app, passport) {
         });
     });
 
-    app.get("/user/sas_classes", isLoggedIn, isAdmin, function(request, response) {
-        model.findAllSASClasses(function(sas_classes) {
-            var sas_classes = (sas_classes) ? sas_classes : [];
-            var object = {
-                page: "sas_classes",
-                title: "SAS Classes",
-                user: request.user,
-                sas_classes: sas_classes
-            };
-            response.render("admin", object);
-        });
-    });
-
-    app.get("/user/sas_classes/edit", isLoggedIn, isAdmin, function(request, response) {
-        model.findAllSASClasses(function(sas_classes) {
-            var sas_classes = (sas_classes) ? sas_classes : [];
-            var object = {
-                page: "edit_sas_classes",
-                title: "Edit SAS Classes",
-                user: request.user,
-                sas_classes: sas_classes
-            };
-            response.render("admin", object);
-        });
-    });
-
     app.get("/user/schools", isLoggedIn, isAdmin, function(request, response) {
-        model.findAllSchools(function(schools) {
+        model.findAllSchools(function(error, schools) {
             var schools = (schools) ? schools : [];
             var object = {
                 page: "schools",
@@ -230,7 +204,7 @@ module.exports = function(app, passport) {
     });
 
     app.get("/user/schools/edit", isLoggedIn, isAdmin, function(request, response) {
-        model.findAllSchools(function(schools) {
+        model.findAllSchools(function(error, schools) {
             var schools = (schools) ? schools : [];
             var object = {
                 page: "edit_schools",
@@ -271,7 +245,7 @@ module.exports = function(app, passport) {
         } else if (field == "schools") {
             update_function = model.updateSchools;
             add_function = model.addSchools;
-            remove_function = model.model.removeSchools;
+            remove_function = model.removeSchools;
         } else {
             // The field is not recognized, do something.
             response.redirect("/");
