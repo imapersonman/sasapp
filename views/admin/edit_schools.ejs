@@ -2,8 +2,8 @@
 <script>setInitialRowSize(<%- schools.length - 1 %>)</script>
 
 <div id="row-template">
-    <div><input class="form-control" type="text" value="Name"></div>
-    <div><input class="form-control" type="text" value="SAS Name"></div>
+    <div field="name"><input class="form-control" type="text" value="Name"></div>
+    <div field="sas_name"><input class="form-control" type="text" value="SAS Name"></div>
 </div>
 
 <div class="panel panel-default scrollable">
@@ -17,8 +17,8 @@
         <tbody class="editable-list">
             <% for(var c = 0; c < schools.length; c++) { %>
             <tr a_id=<%= schools[c].id %> row_index=<%= c %>>
-                <td><input class="form-control" type="text" value=<%- "'" +  schools[c].name + "'" %>></td>
-                <td><input class="form-control" type="text" value=<%- "'" + schools[c].sas_name + "'" %>></td>
+                <td field="name"><input class="form-control" type="text" value=<%- "'" +  schools[c].name + "'" %>></td>
+                <td field="sas_name"><input class="form-control" type="text" value=<%- "'" + schools[c].sas_name + "'" %>></td>
                 <td>
                     <button onclick="removeRow(this)" style="float: right" type="button" class="btn btn-default btn-sm">
                         <span class="glyphicon glyphicon-minus"></span> Remove
