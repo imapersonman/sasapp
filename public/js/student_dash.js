@@ -8,6 +8,7 @@ function getTeachers(student_id) {
 }
 
 function getRankings(student_id) {
+    console.log("User ID: " + student_id);
     var post_object = {
         student_id: student_id
     };

@@ -212,7 +212,7 @@ exports.query = function(query, pool, callback) {
 };
 
 exports.runProc = function(proc_name, params, pool, callback) {
-    var query = exports.buildProcQuery(proc_name, params);
+    var query = exports.buildProcQuery(proc_name, params, pool);
     exports.query(query, pool, callback);
 };
 
