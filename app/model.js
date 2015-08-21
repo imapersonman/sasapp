@@ -74,7 +74,6 @@ exports.findRankingsForTeacher = function(teacher_id, callback) {
 
 exports.findAllStudents = function(callback) {
     var proc_name = "FindAllStudents";
-    console.log("In FindAllStudents");
     helper.runProc(proc_name, [], pool, callback);
 };
 
@@ -87,7 +86,6 @@ exports.findClass = function(class_id, callback) {
     var proc_name = "FindClass";
     var params = [class_id];
     helper.runProc(proc_name, params, pool, function(error, results) {
-        console.log("Results: " + JSON.stringify(results[0]));
         callback(error, results[0]);
     });
 };
@@ -252,7 +250,6 @@ exports.updateTeachers = function(updates, callback) {
 };
 
 exports.updateClasses = function(updates, callback) {
-    console.log("Updates: " + JSON.stringify(updates));
     var proc_name_n = "UpdateClassName";
     var proc_name_r = "UpdateClassRoom";
     var proc_name_p = "UpdateClassPeriod";
@@ -327,11 +324,9 @@ exports.removeClasses = function(removed, callback) {
     for (var r = 0; r < removed.length; r++) {
         var id = removed[r];
         var params = [id];
-        console.log("ID: " + JSON.stringify(id));
         query += helper.buildProcQuery(proc_name, params, pool);
         if (r < removed.length - 1) query += "\n";
     }
-    console.log("Remove Query: " + query);
     helper.query(query, pool, callback);
 };
 
