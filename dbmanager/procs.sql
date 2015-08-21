@@ -376,12 +376,13 @@ END//
 
 DROP PROCEDURE IF EXISTS RemoveStudentFromClass//
 CREATE PROCEDURE RemoveStudentFromClass
-(IN p_class_id INTEGER)
+(IN p_class_id INTEGER, IN p_student_id INTEGER)
 BEGIN
     START TRANSACTION;
-    UPDATE student_sas_classes SET deleted = 1
+    UPDATE student_classes SET deleted = 1
     WHERE class_id = p_class_id;
-    DELETE FROM student_sas_classes WHERE class_id = p_class_id;
+    DELETE FROM student_classes WHERE class_id = p_class_id
+    AND student_id = p_student_id;
     COMMIT;
 END//
 

@@ -78,7 +78,6 @@ module.exports = function(app, passport) {
             return this.filter(function(i) {return a.indexOf(i) < 0;});
         };
         var class_id = request.params.class_id;
-        console.log("Class ID: " + class_id);
         model.findClass(class_id, function(error, _class) {
             model.findAllStudents(function(error, all_students) {
                 model.findAllTeachers(function(error, all_teachers) {
@@ -275,6 +274,7 @@ module.exports = function(app, passport) {
     app.post("/model/update/class/students", isLoggedIn, isAdmin, function(request, response) {
         var class_id = request.body.class_id;
         var students = JSON.parse(request.body.students);
+        console.log("Students: " + request.body.students);
         model.addStudentsToClass(class_id, students, function(messages) {
             response.end(JSON.stringify(messages));
         });

@@ -35,7 +35,7 @@
             </thead>
             <tbody id="class-students">
                 <% for(var s = 0; s < students.length; s++) { %>
-                    <tr user_id=<%- "'" + students[s].id + "'" %>>
+                    <tr id=<%- "'" + students[s].id + "'" %>>
                         <td><input type="checkbox" value=""></td>
                         <td><%= students[s].name %></td>
                         <td><%= students[s].email %></td>
@@ -64,7 +64,7 @@
             </thead>
             <tbody id="all-students">
                 <% for(var s = 0; s < all_students.length; s++) { %>
-                    <tr user_id=<%- "'" + all_students[s].id + "'" %>>
+                    <tr id=<%- "'" + all_students[s].id + "'" %>>
                         <td><input type="checkbox" value=""></td>
                         <td><%= all_students[s].name %></td>
                         <td><%= all_students[s].email %></td>

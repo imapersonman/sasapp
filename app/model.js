@@ -175,7 +175,7 @@ exports.addStudentsToClass = function(class_id, added, callback) {
     var query = "";
     for (var a = 0; a < added.length; a++) {
         var st = added[a];
-        var params = [class_id, st.student_id];
+        var params = [class_id, st];
         query += helper.buildProcQuery(proc_name, params, pool);
         if (a < added.length - 1) query += "\n";
     }
