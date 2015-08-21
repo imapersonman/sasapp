@@ -86,7 +86,7 @@ exports.findAllTeachers = function(callback) {
 exports.findClass = function(class_id, callback) {
     var proc_name = "FindClass";
     var params = [class_id];
-    helper.runProc(proc_name, params, pool, function(results) {
+    helper.runProc(proc_name, params, pool, function(error, results) {
         callback(results[0]);
     });
 };
@@ -221,7 +221,7 @@ exports.updateStudents = function(updates, callback) {
         if (st.name) query += helper.buildProcQuery(proc_name_n, params_n, pool);
         if (st.email) query += helper.buildProcQuery(proc_name_e, params_e, pool);
         if (st.school_id) query += helper.buildProcQuery(proc_name_s, params_s, pool);
-        if (r < updates.length - 1) query += "\n";
+        if (i < updates.length - 1) query += "\n";
     }
     helper.query(query, pool, callback);
 };
@@ -245,7 +245,7 @@ exports.updateTeachers = function(updates, callback) {
         if (st.email) query += h.buildProcQuery(proc_name_e, params_e, pool);
         if (st.school_id) query += h.buildProcQuery(proc_name_s, params_s, pool);
         if (st.room_num) query += h.buildProcQuery(proc_name_r, params_r, pool);
-        if (r < updates.length - 1) query += "\n";
+        if (i < updates.length - 1) query += "\n";
     }
     helper.query(query, pool, callback);
 };
@@ -267,7 +267,7 @@ exports.updateClasses = function(updates, callback) {
         if (st.name) query += h.buildProcQuery(proc_name_n, params_n, pool);
         if (st.room_num) query += h.buildProcQuery(proc_name_r, params_r, pool);
         if (st.period) query += h.buildProcQuery(proc_name_p, params_p, pool);
-        if (r < updates.length - 1) query += "\n";
+        if (i < updates.length - 1) query += "\n";
     }
     h.query(query, pool, callback);
 };

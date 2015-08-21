@@ -78,10 +78,11 @@ module.exports = function(app, passport) {
             return this.filter(function(i) {return a.indexOf(i) < 0;});
         };
         var class_id = request.params.class_id;
-        model.findClass(class_id, function(_class) {
-            model.findAllStudents(function(all_students) {
-                model.findAllTeachers(function(all_teachers) {
-                    model.findStudentsForClass(class_id, function(students) {
+        console.log("User: " + JSON.stringify(request.user));
+        model.findClass(class_id, function(error, _class) {
+            model.findAllStudents(function(error, all_students) {
+                model.findAllTeachers(function(error, all_teachers) {
+                    model.findStudentsForClass(class_id, function(error, students) {
                         all_students = userArrayDiff(all_students, students);
                         var object = {
                             page: "edit_class",
