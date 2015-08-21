@@ -12,7 +12,7 @@ function getRankings(student_id) {
     var post_object = {
         student_id: student_id
     };
-    $.post("/model/find/rankings", post_object, function(data, status) {
+    $.post("/model/find/student/rankings", post_object, function(data, status) {
         renderRankings(JSON.parse(data));
     });
 }

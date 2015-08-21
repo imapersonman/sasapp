@@ -317,9 +317,16 @@ module.exports = function(app, passport) {
         });
     });
 
-    app.post("/model/find/rankings", isLoggedIn, isStudent, function(request, response) {
+    app.post("/model/find/student/rankings", isLoggedIn, isStudent, function(request, response) {
         var student_id = request.body.student_id;
         model.findRankingsForStudent(student_id, function(error, rankings) {
+            response.end(JSON.stringify(rankings));
+        });
+    });
+
+    app.post("/model/find/teacher/rankings", isLoggedIn, isTeacher, function(request, response) {
+        var teacher_id = request.body.teacher_id;
+        model.findRankingsForTeacher(teacher_id, function(error, rankings) {
             response.end(JSON.stringify(rankings));
         });
     });
@@ -333,7 +340,8 @@ module.exports = function(app, passport) {
 
     app.post("/model/teacher/request", isLoggedIn, isTeacher, function(request, response) {
         var students = JSON.parse(request.body.students);
-        model.addTeacherSASRequests(students, function(messages) {
+        var teacher_id = request.body.teacher_id;
+        model.addTeacherSASRequests(teacher_id, students, function(messages) {
             response.end(JSON.stringify(messages));
         });
     });

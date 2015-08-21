@@ -192,12 +192,12 @@ exports.addSASRequests = function(ranks, callback) {
     helper.query(query, pool, callback);
 };
 
-exports.addTeacherSASRequests = function(students, callback) {
+exports.addTeacherSASRequests = function(teacher_id, students, callback) {
     var proc_name = "AddSASRequest";
     var query = "";
     for (var s = 0; s < students.length; s++) {
         var st = students[s];
-        var params = [st.id, "-1"];
+        var params = [st, teacher_id, "-1"];
         query += helper.buildProcQuery(proc_name, params, pool);
         if (s < students.length - 1) query += "\n";
     }
