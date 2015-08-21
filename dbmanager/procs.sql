@@ -48,9 +48,10 @@ DROP PROCEDURE IF EXISTS FindStudentsForTeacher//
 CREATE PROCEDURE FindStudentsForTeacher
 (IN p_teacher_id INTEGER)
 BEGIN
-    SELECT users.id, users.name, users.email FROM student_classes
+    SELECT users.id, users.name, users.email FROM classes
+    JOIN student_classes ON student_classes.class_id = classes.id
     JOIN users ON student_classes.student_id = users.id
-    WHERE teacher_id = p_teacher_id;
+    WHERE classes.teacher_id = p_teacher_id;
 END//
 
 DROP PROCEDURE IF EXISTS FindTeachersForStudent//
