@@ -2,7 +2,7 @@
 <script>getTeachers(<%= user.id %>)</script>
 <script>getRankings(<%= user.id %>)</script>
 
-<button onclick="sendRanks()" style="float: right" type="button" class="btn btn-default btn-sm">Submit SAS Ranks</button>
+<button onclick="sendRanks(<%= user.id %>)" style="float: right" type="button" class="btn btn-default btn-sm">Submit SAS Ranks</button>
 <h4>Past Requests:</h4>
 <div class="row">
     <div class="col-md-4">

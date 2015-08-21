@@ -26,7 +26,7 @@ function renderTeachers(teachers) {
     console.log("Length: " + teachers.length)
     for (var t = 0; t < teachers.length; t++) {
         $("tbody#teacher-list").append(""
-            + "<tr st_id=" + teachers[t].st_id + ">"
+            + "<tr t_id=" + teachers[t].id + ">"
             + "<td>"
             + "<select class=\"rank-list\">"
             + options
@@ -49,14 +49,16 @@ function renderRankings(rankings) {
     }
 }
 
-function sendRanks() {
+function sendRanks(user_id) {
     $('#loading-indicator').show();
     var class_ranks = [];
     $(".rank-list").each(function() {
-        var st_id = $(this).parentsUntil("tbody").last().attr("st_id");
+        var teacher_id = $(this).parentsUntil("tbody").last().attr("t_id");
+        console.log("Teacher ID: " + teacher_id);
         var rank = $(this).find(":selected").val();
         class_ranks.push({
-            st_id: st_id,
+            student_id: user_id,
+            teacher_id: teacher_id,
             rank: (rank != "") ? rank : 0
         });
     });
