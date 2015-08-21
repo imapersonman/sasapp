@@ -327,6 +327,7 @@ module.exports = function(app, passport) {
 
     app.post("/model/student/request", isLoggedIn, isStudent, function(request, response) {
         var ranks = JSON.parse(request.body.ranks);
+        console.log("Ranks: " + request.body.ranks);
         model.addSASRequests(ranks, function(messages) {
             response.end(JSON.stringify(messages));
         });

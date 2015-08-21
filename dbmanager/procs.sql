@@ -226,7 +226,7 @@ BEGIN
     START TRANSACTION;
     INSERT INTO sas_requests
     (student_id, sas_teacher_id, rank, timestamp)
-    VALUES (p_student_id, p_teache_id, p_rank, NOW());
+    VALUES (p_student_id, p_teacher_id, p_rank, NOW());
     COMMIT;
 END//
 
