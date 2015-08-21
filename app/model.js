@@ -189,7 +189,7 @@ exports.addSASRequests = function(ranks, callback) {
         var st = ranks[r];
         var params = [st.student_id, st.teacher_id, st.rank];
         query += helper.buildProcQuery(proc_name, params, pool);
-        if (a < added.length - 1) query += "\n";
+        if (r < ranks.length - 1) query += "\n";
     }
     helper.query(query, pool, callback);
 };
@@ -201,7 +201,7 @@ exports.addTeacherSASRequests = function(students, callback) {
         var st = students[s];
         var params = [st.id, "-1"];
         query += helper.buildProcQuery(proc_name, params, pool);
-        if (a < added.length - 1) query += "\n";
+        if (s < students.length - 1) query += "\n";
     }
     helper.query(query, pool, callback);
 };

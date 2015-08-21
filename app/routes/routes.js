@@ -306,21 +306,21 @@ module.exports = function(app, passport) {
 
     app.post("/model/find/student_classes", isLoggedIn, isStudent, function(request, response) {
         var student_id = request.body.student_id;
-        model.findTeachersForStudent(student_id, function(teachers) {
+        model.findTeachersForStudent(student_id, function(error, teachers) {
             response.end(JSON.stringify(teachers));
         });
     });
 
     app.post("/model/find/teacher_students", isLoggedIn, isTeacher, function(request, response) {
         var teacher_id = request.body.teacher_id;
-        model.findStudentsForTeacher(teacher_id, function(students) {
+        model.findStudentsForTeacher(teacher_id, function(error, students) {
             response.end(JSON.stringify(students));
         });
     });
 
     app.post("/model/find/rankings", isLoggedIn, isStudent, function(request, response) {
         var student_id = request.body.student_id;
-        model.findRankingsForStudent(student_id, function(rankings) {
+        model.findRankingsForStudent(student_id, function(error, rankings) {
             response.end(JSON.stringify(rankings));
         });
     });
