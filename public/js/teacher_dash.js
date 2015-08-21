@@ -1,6 +1,6 @@
 function getStudents(teacher_id) {
     var post_object = {
-        teacher_id
+        teacher_id: teacher_id
     };
     $.post("/model/find/teacher_students", post_object, function(data, status) {
         renderStudents(JSON.parse(data));
