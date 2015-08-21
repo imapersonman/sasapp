@@ -78,7 +78,7 @@ module.exports = function(app, passport) {
             return this.filter(function(i) {return a.indexOf(i) < 0;});
         };
         var class_id = request.params.class_id;
-        console.log("User: " + JSON.stringify(request.user));
+        console.log("Class ID: " + class_id);
         model.findClass(class_id, function(error, _class) {
             model.findAllStudents(function(error, all_students) {
                 model.findAllTeachers(function(error, all_teachers) {

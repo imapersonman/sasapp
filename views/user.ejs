@@ -1,9 +1,11 @@
 <html lang="en">
     <head>
-        <% if (!user.sas_name) { %>
-        <title>Admin Portal - <%= title %></title>
-        <% } else { %>
+        <% if (user.type == "student") { %>
+        <title>Student Portal - <%= title %></title>
+        <% } else if (user.type == "teacher") { %>
         <title><%= user.sas_name %> - <%= title %></title>
+        <% } else { %>
+        <title><%= title %></title>
         <% } %>
         <link rel="stylesheet" type="text/css" href="/static/bootstrap/css/bootstrap.css">
         <link rel="stylesheet" type="text/css" href="/static/bootstrap-combobox/css/bootstrap-combobox.css">

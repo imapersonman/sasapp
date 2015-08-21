@@ -87,7 +87,8 @@ exports.findClass = function(class_id, callback) {
     var proc_name = "FindClass";
     var params = [class_id];
     helper.runProc(proc_name, params, pool, function(error, results) {
-        callback(results[0]);
+        console.log("Results: " + JSON.stringify(results[0]));
+        callback(error, results[0]);
     });
 };
 
