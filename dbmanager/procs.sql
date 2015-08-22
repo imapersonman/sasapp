@@ -348,10 +348,7 @@ CREATE PROCEDURE RemoveTeacher
 (IN p_teacher_id INTEGER)
 BEGIN
     START TRANSACTION;
-    UPDATE users SET deleted = TRUE WHERE id = p_teacher_id
-    AND type = 'teacher';
-    UPDATE sas_classes SET deleted = TRUE
-    WHERE teacher_id = p_teacher_id;
+    UPDATE classes SET teacher_id = NULL WHERE teacher_id = p_teacher_id;
     DELETE FROM sas_classes WHERE teacher_id = p_teacher_id;
     DELETE FROM users WHERE id = p_teacher_id;
     COMMIT;
