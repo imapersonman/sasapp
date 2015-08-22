@@ -73,3 +73,4 @@ ALTER TABLE `student_sas_classes` ADD CONSTRAINT `student_sas_classes_fk0` FOREI
 
 ALTER TABLE `student_sas_classes` ADD CONSTRAINT `student_sas_classes_fk1` FOREIGN KEY (`student_id`) REFERENCES `users`(`id`);
 
+ALTER TABLE `users` ADD UNIQUE (`email`);

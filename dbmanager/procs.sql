@@ -352,8 +352,8 @@ BEGIN
     AND type = 'teacher';
     UPDATE sas_classes SET deleted = TRUE
     WHERE teacher_id = p_teacher_id;
-    DELETE FROM users WHERE id = p_teacher_id;
     DELETE FROM sas_classes WHERE teacher_id = p_teacher_id;
+    DELETE FROM users WHERE id = p_teacher_id;
     COMMIT;
 END//
 
