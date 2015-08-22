@@ -336,9 +336,9 @@ CREATE PROCEDURE RemoveStudent
 (IN p_student_id INTEGER)
 BEGIN
     START TRANSACTION;
-    UPDATE users SET deleted = TRUE
-    WHERE id = p_student_id
-    AND type = 'student'; -- Just in case.
+    DELETE FROM student_classes WHERE student_id = p_student_id;
+    DELETE FROM sas_requests WHERE student_id = p_student_id;
+    DELETE FROM student_sas_classes WHERE student_id = p_student_id;
     DELETE FROM users WHERE id = p_student_id;
     COMMIT;
 END//
