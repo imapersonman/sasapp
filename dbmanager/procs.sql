@@ -349,6 +349,7 @@ CREATE PROCEDURE RemoveTeacher
 BEGIN
     START TRANSACTION;
     UPDATE classes SET teacher_id = NULL WHERE teacher_id = p_teacher_id;
+    DELETE FROM sas_requests WHERE sas_teacher_id = p_teacher_id;
     DELETE FROM sas_classes WHERE teacher_id = p_teacher_id;
     DELETE FROM users WHERE id = p_teacher_id;
     COMMIT;
