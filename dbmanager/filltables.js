@@ -22,9 +22,18 @@ function fillTeachers() {
     var t_proc_name = "AddTeacher";
     var t_query = "";
     for (var t = 0; t < NTEACHERS; t++) {
-        var t_name = generateRandomString(NAME_LENGTH);
-        var t_email = t_name + "." + t_name + T_EMAIL_EXT;
-        var t_room_num = "M" + t;
+        var t_name;
+        var t_email;
+        var t_room_num;
+        if (t == 0) {
+            t_name = "Koissi Adjorlolo";
+            t_email = "adjorlolo.k@husky.neu.edu";
+            t_room_num = "M999";
+        } else {
+            t_name = generateRandomString(NAME_LENGTH);
+            t_email = t_name + "." + t_name + T_EMAIL_EXT;
+            t_room_num = "M" + t;
+        }
         var t_params = [t_name, t_email, t_room_num];
         t_query += h.buildProcQuery(t_proc_name, t_params);
     }
@@ -60,8 +69,15 @@ function fillStudents() {
     var s_proc_name = "AddStudent";
     var s_query = "";
     for (var s = 0; s < NSTUDENTS; s++) {
-        var s_name = generateRandomString(NAME_LENGTH);
-        var s_email = s_name + "." + s_name + S_EMAIL_EXT;
+        var s_name;
+        var s_email;
+        if (s == 0) {
+            s_name = "Koissi Adjorlolo";
+            s_email = "ka0644118@k12.shorelineschools.org";
+        } else {
+            s_name = generateRandomString(NAME_LENGTH);
+            s_email = s_name + "." + s_name + S_EMAIL_EXT;
+        }
         var s_params = [s_name, s_email];
         s_query += h.buildProcQuery(s_proc_name, s_params);
     }
