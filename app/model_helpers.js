@@ -1,5 +1,8 @@
 var mysql = require("mysql");
-
+var config = require("../config/database");
+config.multipleStatements = true;
+config.connectionLimit = 20;
+var pool = mysql.createPool(config);
 
 exports.logQuery = function(query) {
     console.log();
@@ -199,7 +202,7 @@ exports.processTransactionError = function(error, connection) {
     }
 };
 
-exports.query = function(query, pool, callback) {
+exports.query = function(query, callback) {
     pool.getConnection(function(error, connection) {
         // TODO(koissi) Cleanup debug
         if (error) throw error;
@@ -211,12 +214,12 @@ exports.query = function(query, pool, callback) {
     });
 };
 
-exports.runProc = function(proc_name, params, pool, callback) {
+exports.runProc = function(proc_name, params, callback) {
     var query = exports.buildProcQuery(proc_name, params, pool);
-    exports.query(query, pool, callback);
+    exports.query(query, callback);
 };
 
-exports.buildProcQuery = function(proc_name, params, pool) {
+exports.buildProcQuery = function(proc_name, params) {
     var query = "CALL " + proc_name + "(";
     for (var p = 0; p < params.length; p++) {
         query += pool.escape(params[p]);
