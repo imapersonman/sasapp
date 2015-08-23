@@ -83,24 +83,36 @@ function assignUsersToClass() {
         h.query(c_query, function(error, c_results) {
             for (var u = 0; u < u_results.length; u++) {
                 var user = u_results[u];
-                var class_index = -1;
-                var proc_name = "";
+                
                 if (user.type == "student") {
                     var chosen_classes = [];
                     for (var c = 0; c < CLASSES_PER_STUDENT; c++) {
-                        while (chosen_classes.indexOf(class_index) != -1) {
+                        var class_index = randomInt(0, c_results.length - 1);
+                        while (chosen_classes.indexOf(class_index) > -1) {
                             class_index = randomInt(0, c_results.length - 1);
                         }
-                        chosen_classes.push(class_index);
-                        proc_name = s_proc_name;
+                        var class_id = c_results[class_index].id;
+                        var params = [class_id, user.id];
+                        query += h.buildProcQuery(s_proc_name, params);
+                        if (c < CLASSES_PER_TEACHER - 1) query += "\n";
                     }
                 } else if (user.type == "teacher") {
-                    class_index = Math.floor(u / CLASSES_PER_TEACHER);
-                    proc_name = t_proc_name;
-                } else continue;
-                var class_id = c_results[class_index].id;
-                var params = [class_id, user.id];
-                query += h.buildProcQuery(proc_name, params);
+                    var chosen_classes = [];
+                    for (var c = 0; c < CLASSES_PER_TEACHER; c++) {
+                        var class_index = randomInt(0, c_results.length - 1);
+                        while (chosen_classes.indexOf(class_index) > -1
+                                && c_results[class_index].teacher == null) {
+                            class_index = randomInt(0, c_results.length - 1);
+                        }
+                        var class_id = c_results[class_index].id;
+                        var params = [class_id, user.id];
+                        query += h.buildProcQuery(t_proc_name, params);
+                        if (c < CLASSES_PER_TEACHER - 1) query += "\n";
+                    }
+                } else {
+                    continue;
+                }
+
                 if (u < u_results.length - 1) query += "\n";
             }
             h.query(query, function(error, results) {
@@ -115,7 +127,7 @@ function generateRandomString(length) {
     var str = "";
     for (var l = 0; l < length; l++) {
         var rChar = LETTERS.charAt(randomInt(0, LETTERS.length - 1));
-        str += rChar; 
+        str += rChar;
     }
     return str;
 };
