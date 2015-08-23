@@ -58,11 +58,12 @@ DROP PROCEDURE IF EXISTS FindTeachersForStudent//
 CREATE PROCEDURE FindTeachersForStudent
 (IN p_student_id INTEGER)
 BEGIN
-    SELECT DISTINCT users.id, users.name, users.email, sas_classes.room_num
+    SELECT users.id, users.name, users.email, sas_classes.room_num
     FROM student_classes
     JOIN classes ON student_classes.class_id = classes.id
     JOIN users ON classes.teacher_id = users.id
     JOIN sas_classes ON users.id = sas_classes.teacher_id;
+    WHERE classes.student_id = p_student_id;
 END//
 
 DROP PROCEDURE IF EXISTS FindRankingsForStudent//
