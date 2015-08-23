@@ -393,4 +393,24 @@ BEGIN
     SHOW PROCEDURE STATUS;
 END//
 
+DROP PROCEDURE IF EXISTS SortSASRequests//
+CREATE PROCEDURE SortSASRequests
+()
+BEGIN
+    DECLARE request CURSOR FOR
+    SELECT sas_teacher_id, student_id FROM sas_requests ORDER BY rank, timestamp;
+    OPEN request;
+    SELECT COUNT(*) FROM sas_requests INTO n;
+
+    SET i = 0;
+    WHILE i < n DO
+        FETCH request INTO t_id, s_id;
+
+        INSERT INTO student_sas_classes (sas_teacher_id, student_id)
+        VALUES (t_id, s_id);
+
+        SET i = i + 1;
+    END WHILE
+END
+
 DELIMITER ;
