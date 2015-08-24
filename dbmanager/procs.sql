@@ -401,8 +401,8 @@ BEGIN
     SELECT sas_teacher_id, student_id FROM sas_requests ORDER BY rank, timestamp;
     OPEN request;
     
-    DECLARE n INT DEFAULT 0;
-    DECLARE i INT DEFAULT 0;
+    DECLARE n INT;
+    DECLARE i INT;
     SELECT COUNT(*) FROM sas_requests INTO n;
 
     SET i = 0;
