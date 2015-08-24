@@ -393,29 +393,18 @@ BEGIN
     SHOW PROCEDURE STATUS;
 END//
 
-DROP PROCEDURE IF EXISTS SortSASRequests//
-CREATE PROCEDURE SortSASRequests
+DROP PROCEDURE IF EXISTS FindAllRequests//
+CREATE PROCEDURE FindAllRequests
 ()
 BEGIN
-    DECLARE request CURSOR FOR
-    SELECT sas_teacher_id, student_id FROM sas_requests ORDER BY rank, timestamp;
-    OPEN request;
-    
-    DECLARE n INT DEFAULT 0;
-    DECLARE i INT DEFAULT 0;
-    SELECT COUNT(*) FROM sas_requests INTO n;
+    SELECT * FROM sas_requests ORDER BY rank, timestamp;
+END//
 
-    SET i = 0;
-    WHILE i < n DO
-        FETCH request INTO t_id, s_id;
-
-        INSERT INTO student_sas_classes (sas_teacher_id, student_id)
-        VALUES (t_id, s_id);
-
-        SET i = i + 1;
-    END WHILE;
-
-    CLOSE request;
-END
+DROP PROCEDURE IF EXISTS RemoveRequest//
+CREATE PROCEDURE RemoveRequest
+(IN p_request_id INTEGER)
+BEGIN
+    DELETE FROM sas_requests WHERE id = p_request_id;
+END//
 
 DELIMITER ;
