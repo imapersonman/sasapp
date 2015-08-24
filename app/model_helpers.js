@@ -203,13 +203,17 @@ exports.processTransactionError = function(error, connection) {
 };
 
 exports.query = function(query, callback) {
+    exports.fullQuery(query, function(error, results) {
+        callback(error, results[0]);
+    });
+};
+
+exports.fullQuery = function(query, callback) {
     pool.getConnection(function(error, connection) {
-        // TODO(koissi) Cleanup debug
         if (error) throw error;
         connection.query(query, function(error, results) {
-            // TODO(koissi) Cleanup debug
             exports.processQueryError(error, query);
-            callback(error, results[0]);
+            callback(error, results);
         });
     });
 };
