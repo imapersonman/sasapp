@@ -289,7 +289,7 @@ module.exports = function(app, passport) {
 
     app.post("/model/update/class/teacher", isLoggedIn, isAdmin, function(request, response) {
         var class_id = request.body.class_id;
-        var teacher_id = request.body.teacher_id;
+        var teacher_id = request.user.id;
         model.updateClassTeacher(class_id, teacher_id, function(messages) {
             response.end(JSON.stringify(messages));
         });
@@ -304,28 +304,28 @@ module.exports = function(app, passport) {
     });
 
     app.post("/model/find/student_classes", isLoggedIn, isStudent, function(request, response) {
-        var student_id = request.body.student_id;
+        var student_id = request.user.id;
         model.findTeachersForStudent(student_id, function(error, teachers) {
             response.end(JSON.stringify(teachers));
         });
     });
 
     app.post("/model/find/teacher_students", isLoggedIn, isTeacher, function(request, response) {
-        var teacher_id = request.body.teacher_id;
+        var teacher_id = request.user.id;
         model.findStudentsForTeacher(teacher_id, function(error, students) {
             response.end(JSON.stringify(students));
         });
     });
 
     app.post("/model/find/student/rankings", isLoggedIn, isStudent, function(request, response) {
-        var student_id = request.body.student_id;
+        var student_id = request.user.id;
         model.findRankingsForStudent(student_id, function(error, rankings) {
             response.end(JSON.stringify(rankings));
         });
     });
 
     app.post("/model/find/teacher/rankings", isLoggedIn, isTeacher, function(request, response) {
-        var teacher_id = request.body.teacher_id;
+        var teacher_id = request.user.id;
         model.findRankingsForTeacher(teacher_id, function(error, rankings) {
             response.end(JSON.stringify(rankings));
         });
@@ -333,14 +333,15 @@ module.exports = function(app, passport) {
 
     app.post("/model/student/request", isLoggedIn, isStudent, function(request, response) {
         var ranks = JSON.parse(request.body.ranks);
-        model.addSASRequests(ranks, function(messages) {
+        var student_id = request.user.id;
+        model.addStudentSASRequests(student_id, ranks, function(messages) {
             response.end(JSON.stringify(messages));
         });
     });
 
     app.post("/model/teacher/request", isLoggedIn, isTeacher, function(request, response) {
         var students = JSON.parse(request.body.students);
-        var teacher_id = request.body.teacher_id;
+        var teacher_id = request.user.id;
         model.addTeacherSASRequests(teacher_id, students, function(messages) {
             response.end(JSON.stringify(messages));
         });
