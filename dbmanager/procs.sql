@@ -76,7 +76,7 @@ BEGIN
     ON sas_requests.sas_teacher_id = sas_classes.teacher_id
     JOIN users ON sas_classes.teacher_id = users.id
     WHERE sas_requests.student_id = p_student_id
-    AND sas_requests.rank > -1;
+    AND sas_requests.rank > 0;
 END//
 
 DROP PROCEDURE IF EXISTS FindRankingsForTeacher//
