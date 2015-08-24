@@ -129,7 +129,7 @@ CREATE PROCEDURE FindAllClasses
 ()
 BEGIN
     SELECT classes.id, classes.name, classes.room_num, classes.period,
-    users.name AS teacher_name, users.email
+    users.id AS teacher_id, users.name AS teacher_name, users.email
     FROM classes
     LEFT JOIN users ON classes.teacher_id = users.id;
 END//

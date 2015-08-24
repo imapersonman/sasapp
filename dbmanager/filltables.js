@@ -115,12 +115,15 @@ function assignUsersToClass() {
                 } else if (user.type == "teacher") {
                     var chosen_classes = [];
                     for (var c = 0; c < CLASSES_PER_TEACHER; c++) {
+                        console.log("User ID: " + user.id);
                         var class_index = randomInt(0, c_results.length - 1);
+                        console.log("CLASS INDEX TEACHER: " + c_results[class_index].teacher_id);
                         while (chosen_classes.indexOf(class_index) > -1
-                                && c_results[class_index].teacher == null) {
+                                && c_results[class_index].teacher_id == null) {
                             class_index = randomInt(0, c_results.length - 1);
                         }
                         var class_id = c_results[class_index].id;
+                        console.log("Class ID: " + class_id);
                         var params = [class_id, user.id];
                         query += h.buildProcQuery(t_proc_name, params);
                         if (c < CLASSES_PER_TEACHER - 1) query += "\n";
