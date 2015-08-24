@@ -46,12 +46,14 @@ CREATE TABLE `sas_classes` (
 	`teacher_id` INT NOT NULL,
 	`room_num` varchar(16) NOT NULL,
 	`student_cap` INT,
+	`taken` BOOLEAN NOT NULL DEFAULT '0',
 	`deleted` BOOLEAN NOT NULL DEFAULT '0'
 );
 
 CREATE TABLE `student_sas_classes` (
 	`sas_teacher_id` INT NOT NULL,
 	`student_id` INT NOT NULL,
+	`present` BOOLEAN NOT NULL DEFAULT '0',
 	`deleted` BOOLEAN NOT NULL DEFAULT '0'
 );
 

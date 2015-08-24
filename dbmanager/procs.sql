@@ -410,4 +410,38 @@ BEGIN
     DELETE FROM sas_requests WHERE id = p_request_id;
 END//
 
+DROP PROCEDURE IF EXISTS UpdateAttendance//
+CREATE PROCEDURE UpdateAttendance
+(IN p_teacher_id INTEGER, IN p_student_id INTEGER, IN p_present BOOLEAN)
+BEGIN
+    START TRANSACTION;
+    UPDATE sas_classes SET taken = 1
+    WHERE teacher_id = p_teacher_id;
+    UPDATE student_sas_classes SET present = p_present
+    WHERE student_id = p_student_id;
+    COMMIT;
+END//
+
+DROP PROCEDURE IF EXISTS FindPresentStudents//
+CREATE PROCEDURE FindAllPresentStudents
+()
+BEGIN
+    SELECT users.name, users.email, schools.name
+    FROM student_sas_classes
+    JOIN users ON student_sas_classes.student_id = users.id
+    LEFT JOIN schools ON users.school_id = schools.id
+    WHERE student_sas_classes.present = 1;
+END//
+
+DROP PROCEDURE IF EXISTS FindPresentStudentsForTeacher//
+CREATE PROCEDURE FindPresentStudentsForTeacher
+(IN p_teacher_id INTEGER)
+BEGIN
+    SELECT users.name, users.email
+    FROM student_sas_classes
+    JOIN users ON student_sas_classes.student_id = users.id
+    WHERE student_sas_classes.present = 1
+    AND student_sas_classes.sas_teacher_id = p_teacher_id;
+END//
+
 DELIMITER ;

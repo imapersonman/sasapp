@@ -108,6 +108,17 @@ exports.findAllSchools = function(callback) {
     helper.runProc(proc_name, [], callback);
 };
 
+exports.findPresentStudents = function(callback) {
+    var proc_name = "FindPresentStudents";
+    helper.runProc(proc_name, [], callback);
+};
+
+exports.findPresentStudentsForTeacher = function(teacher_id, callback) {
+    var proc_name = "FindPresentStudentsForTeacher";
+    var params = [teacher_id];
+    helper.runProc(proc_name, params, callback);
+};
+
 // TODO(koissi): Add ability to build procedure call queries.
 // TODO(koissi): Enable multi-statement queries.
 exports.addStudents = function(added, callback) {
@@ -116,7 +127,7 @@ exports.addStudents = function(added, callback) {
     for (var a = 0; a < added.length; a++) {
         var st = added[a];
         var params = [st.name, st.email];
-        query += helper.buildProcQuery(proc_name, params, pool);
+        query += helper.buildProcQuery(proc_name, params);
         if (a < added.length - 1) query += "\n";
     }
     helper.query(query, callback);
@@ -128,7 +139,7 @@ exports.addTeachers = function(added, callback) {
     for (var a = 0; a < added.length; a++) {
         var st = added[a];
         var params = [st.name, st.email, st.room_num];
-        query += helper.buildProcQuery(proc_name, params, pool);
+        query += helper.buildProcQuery(proc_name, params);
         if (a < added.length - 1) query += "\n";
     }
     helper.query(query, callback);
@@ -140,7 +151,7 @@ exports.addClasses = function(added, callback) {
     for (var a = 0; a < added.length; a++) {
         var st = added[a];
         var params = [st.name, st.room_num, st.period];
-        query += helper.buildProcQuery(proc_name, params, pool);
+        query += helper.buildProcQuery(proc_name, params);
         if (a < added.length - 1) query += "\n";
     }
     helper.query(query, callback);
@@ -152,7 +163,7 @@ exports.addSchools = function(added, callback) {
     for (var a = 0; a < added.length; a++) {
         var st = added[a];
         var params = [st.name, st.sas_name];
-        query += helper.buildProcQuery(proc_name, params, pool);
+        query += helper.buildProcQuery(proc_name, params);
         if (a < added.length - 1) query += "\n";
     }
     helper.query(query, callback);
@@ -165,7 +176,7 @@ exports.addStudentsToClass = function(class_id, added, callback) {
     for (var a = 0; a < added.length; a++) {
         var st = added[a];
         var params = [class_id, st];
-        query += helper.buildProcQuery(proc_name, params, pool);
+        query += helper.buildProcQuery(proc_name, params);
         if (a < added.length - 1) query += "\n";
     }
     helper.query(query, callback);
@@ -177,7 +188,7 @@ exports.addStudentSASRequests = function(student_id, ranks, callback) {
     for (r = 0; r < ranks.length; r++) {
         var st = ranks[r];
         var params = [student_id, st.teacher_id, st.rank];
-        query += helper.buildProcQuery(proc_name, params, pool);
+        query += helper.buildProcQuery(proc_name, params);
         if (r < ranks.length - 1) query += "\n";
     }
     helper.query(query, callback);
@@ -189,7 +200,7 @@ exports.addTeacherSASRequests = function(teacher_id, students, callback) {
     for (var s = 0; s < students.length; s++) {
         var st = students[s];
         var params = [st, teacher_id, "-1"];
-        query += helper.buildProcQuery(proc_name, params, pool);
+        query += helper.buildProcQuery(proc_name, params);
         if (s < students.length - 1) query += "\n";
     }
     helper.query(query, callback);
@@ -208,9 +219,9 @@ exports.updateStudents = function(updates, callback) {
         var params_n = [id, st.name];
         var params_e = [id, st.email];
         var params_s = [id, st.school_id];
-        if (st.name) query += helper.buildProcQuery(proc_name_n, params_n, pool);
-        if (st.email) query += helper.buildProcQuery(proc_name_e, params_e, pool);
-        if (st.school_id) query += helper.buildProcQuery(proc_name_s, params_s, pool);
+        if (st.name) query += helper.buildProcQuery(proc_name_n, params_n);
+        if (st.email) query += helper.buildProcQuery(proc_name_e, params_e);
+        if (st.school_id) query += helper.buildProcQuery(proc_name_s, params_s);
         if (i < updates.length - 1) query += "\n";
     }
     helper.query(query, callback);
@@ -231,10 +242,10 @@ exports.updateTeachers = function(updates, callback) {
         var params_e = [id, st.email];
         var params_s = [id, st.school_id];
         var params_r = [id, st.room_num];
-        if (st.name) query += h.buildProcQuery(proc_name_n, params_n, pool);
-        if (st.email) query += h.buildProcQuery(proc_name_e, params_e, pool);
-        if (st.school_id) query += h.buildProcQuery(proc_name_s, params_s, pool);
-        if (st.room_num) query += h.buildProcQuery(proc_name_r, params_r, pool);
+        if (st.name) query += h.buildProcQuery(proc_name_n, params_n);
+        if (st.email) query += h.buildProcQuery(proc_name_e, params_e);
+        if (st.school_id) query += h.buildProcQuery(proc_name_s, params_s);
+        if (st.room_num) query += h.buildProcQuery(proc_name_r, params_r);
         if (i < updates.length - 1) query += "\n";
     }
     helper.query(query, callback);
@@ -253,9 +264,9 @@ exports.updateClasses = function(updates, callback) {
         var params_n = [id, st.name];
         var params_r = [id, st.room_num];
         var params_p = [id, st.period];
-        if (st.name) query += h.buildProcQuery(proc_name_n, params_n, pool);
-        if (st.room_num) query += h.buildProcQuery(proc_name_r, params_r, pool);
-        if (st.period) query += h.buildProcQuery(proc_name_p, params_p, pool);
+        if (st.name) query += h.buildProcQuery(proc_name_n, params_n);
+        if (st.room_num) query += h.buildProcQuery(proc_name_r, params_r);
+        if (st.period) query += h.buildProcQuery(proc_name_p, params_p);
         if (i < updates.length - 1) query += "\n";
     }
     h.query(query, callback);
@@ -272,8 +283,8 @@ exports.updateSchools = function(updates, callback) {
         var st = updates[id];
         var params_n = [id, st.name];
         var params_s = [id, st.sas_name];
-        if (st.name) query += h.buildProcQuery(proc_name_n, params_n, pool);
-        if (st.sas_name) query += h.buildProcQuery(proc_name_s, params_s, pool);
+        if (st.name) query += h.buildProcQuery(proc_name_n, params_n);
+        if (st.sas_name) query += h.buildProcQuery(proc_name_s, params_s);
         if (i < updates.length - 1) query += "\n";
     }
     h.query(query, callback);
@@ -282,7 +293,18 @@ exports.updateSchools = function(updates, callback) {
 exports.updateClassTeacher = function(class_id, teacher_id, callback) {
     var proc_name = "UpdateClassTeacher";
     var params = [class_id, teacher_id];
-    helper.runProc(proc_name, params, pool, callback);
+    helper.runProc(proc_name, params, callback);
+};
+
+exports.updateAttendance = function(teacher_id, students, present, callback) {
+    var proc_name = "UpdateAttendance";
+    var query = "";
+    for (var s = 0; s < students.length; s++) {
+        var st = students[s];
+        var params = [teacher_id, st.id, st.present];
+        query += helper.buildProcQuery(teacher_id, params);
+    }
+    helper.query(query, callback);
 };
 
 exports.removeStudents = function(removed, callback) {
@@ -291,7 +313,7 @@ exports.removeStudents = function(removed, callback) {
     for (var r = 0; r < removed.length; r++) {
         var id = removed[r];
         var params = [id];
-        query += helper.buildProcQuery(proc_name, params, pool);
+        query += helper.buildProcQuery(proc_name, params);
         if (r < removed.length - 1) query += "\n";
     }
     helper.query(query, callback);
@@ -303,7 +325,7 @@ exports.removeTeachers = function(removed, callback) {
     for (var r = 0; r < removed.length; r++) {
         var id = removed[r];
         var params = [id];
-        query += helper.buildProcQuery(proc_name, params, pool);
+        query += helper.buildProcQuery(proc_name, params);
         if (r < removed.length - 1) query += "\n";
     }
     helper.query(query, callback);
@@ -315,7 +337,7 @@ exports.removeClasses = function(removed, callback) {
     for (var r = 0; r < removed.length; r++) {
         var id = removed[r];
         var params = [id];
-        query += helper.buildProcQuery(proc_name, params, pool);
+        query += helper.buildProcQuery(proc_name, params);
         if (r < removed.length - 1) query += "\n";
     }
     helper.query(query, callback);
@@ -327,7 +349,7 @@ exports.removeSchools = function(removed, callback) {
     for (var r = 0; r < removed.length; r++) {
         var id = removed[r];
         var params = [id];
-        query += helper.buildProcQuery(proc_name, params, pool);
+        query += helper.buildProcQuery(proc_name, params);
         if (r < removed.length - 1) query += "\n";
     }
     helper.query(query, callback);
@@ -339,7 +361,7 @@ exports.removeStudentsFromClass = function(class_id, removed, callback) {
     for (var r = 0; r < removed.length; r++) {
         var id = removed[r];
         var params = [class_id, id];
-        query += helper.buildProcQuery(proc_name, params, pool);
+        query += helper.buildProcQuery(proc_name, params);
         if (r < removed.length - 1) query += "\n";
     }
     helper.query(query, callback);

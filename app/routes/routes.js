@@ -317,6 +317,22 @@ module.exports = function(app, passport) {
         });
     });
 
+    app.post("/model/find/teacher_sas_students", isLoggedIn, isTeacher, function(request, response) {
+        var teacher_id = request.user.id;
+        model.findStudentsForSASClass(teacher_id, function(error, students) {
+            response.end(JSON.stringify(students));
+        });
+    });
+
+    app.post("/model/attendance", isLoggedIn, isTeacher, function(request, response) {
+        var teacher_id = request.user.id;
+        var students = JSON.parse(request.body.students);
+        model.updateAttendance(teacher_id, students, present, function(error, results) {
+            var messages = [];
+            response.end(JSON.stringify(messages));
+        });
+    });
+
     app.post("/model/find/student/rankings", isLoggedIn, isStudent, function(request, response) {
         var student_id = request.user.id;
         model.findRankingsForStudent(student_id, function(error, rankings) {
@@ -344,6 +360,19 @@ module.exports = function(app, passport) {
         var teacher_id = request.user.id;
         model.addTeacherSASRequests(teacher_id, students, function(messages) {
             response.end(JSON.stringify(messages));
+        });
+    }); 
+
+    app.post("/model/find/present", isLoggedIn, isAdmin, function(request, response) {
+        model.findPresentStudents(function(error, results) {
+            response.end(JSON.stringify(results));
+        });
+    });
+
+    app.post("/model/find/present/teacher", isLoggedIn, isAdmin, function(request, response) {
+        var teacher_id = request.body.teacher_id;
+        model.findPresentStudentsForTeacher(teacher_id, function(error, results) {
+            response.end(JSON.stringify(results));
         });
     });
 
