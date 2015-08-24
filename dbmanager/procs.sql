@@ -85,7 +85,7 @@ CREATE PROCEDURE FindRankingsForTeacher
 BEGIN
     SELECT users.name FROM sas_requests
     JOIN users ON sas_requests.id = users.id
-    WHERE sas_requests.teacher_id = p_teacher_id
+    WHERE sas_requests.sas_teacher_id = p_teacher_id
     AND sas_requests.rank = -1;
 END//
 
