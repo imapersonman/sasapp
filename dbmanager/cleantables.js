@@ -10,7 +10,8 @@ var query = "SET FOREIGN_KEY_CHECKS = 0;"
             + "ALTER TABLE users AUTO_INCREMENT = 1;"
             + "ALTER TABLE classes AUTO_INCREMENT = 1;"
             + "ALTER TABLE sas_classes AUTO_INCREMENT = 1;"
-            + "ALTER TABLE student_sas_classes AUTO_INCREMENT = 1;";
+            + "ALTER TABLE student_sas_classes AUTO_INCREMENT = 1;"
+            + "SET FOREIGN_KEY_CHECKS = 1;";
 
 h.query(query, function(error, results) {
     console.log("Successfully cleaned tables.");
