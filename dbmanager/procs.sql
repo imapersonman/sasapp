@@ -183,7 +183,7 @@ BEGIN
     INSERT INTO users (name, email, type)
     VALUES(p_name, p_email, 'student');
     INSERT INTO student_sas_classes (student_id)
-    VALUES(LAST_INSERT_ID);
+    VALUES(LAST_INSERT_ID());
     COMMIT;
 END//
 
