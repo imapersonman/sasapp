@@ -219,6 +219,7 @@ exports.fullQuery = function(query, callback) {
 };
 
 exports.runProc = function(proc_name, params, callback) {
+    console.log("ITS HAPPENING");
     var query = exports.buildProcQuery(proc_name, params, pool);
     exports.query(query, callback);
 };

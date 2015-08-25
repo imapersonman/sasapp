@@ -20,17 +20,14 @@ function firstPass() {
             .on("result", function(row) {
                 var student_id = row.student_id;
                 var teacher_id = row.sas_teacher_id;
-                console.log("Student: " + student_id + ", Teacher: " + teacher_id);
                 if (row && row.rank != 0) {
                     var params = [student_id, teacher_id];
-                    query_list.push(function(callback) {
-                        helper.runProc(a_proc_name, params, callback);
-                    });
+                    a_query += helper.buildProcQuery(a_proc_name, params);
                 }
             })
             .on("end", function() {
-                async.series(query_list, function(error, results) {
-                    if (error) throw error;
+                console.log("At end.");
+                helper.query(a_query, function(error, results) {
                     secondPass();
                 });
             });
@@ -38,8 +35,9 @@ function firstPass() {
 }
 
 function secondPass() {
+    console.log("SecondPass");
     var proc_name = "FinishAssignment";
-    helper.runProc(proc_name, params, function(error, results) {
+    helper.runProc(proc_name, [], function(error, results) {
         finish();
     });
 }

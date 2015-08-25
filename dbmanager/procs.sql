@@ -454,9 +454,8 @@ BEGIN
     DECLARE cap INTEGER;
 
     START TRANSACTION;
-    SELECT COUNT(*) INTO total FROM student_sas_classes
-    WHERE sas_teacher_id = p_teacher_id
-    GROUP BY sas_teacher_id;
+    SELECT student_count INTO total FROM sas_classes
+    WHERE teacher_id = p_teacher_id;
 
     SELECT student_cap INTO cap FROM sas_classes
     WHERE teacher_id = p_teacher_id;
