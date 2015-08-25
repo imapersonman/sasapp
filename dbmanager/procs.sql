@@ -484,7 +484,7 @@ DROP PROCEDURE IF EXISTS FindAllStudentsForSorting//
 CREATE PROCEDURE FindAllStudentsForSorting
 ()
 BEGIN
-    SELECT users.id, sas_requests.teacher_id, sas_requests.rank
+    SELECT users.id, sas_requests.sas_teacher_id, sas_requests.rank
     FROM users
     LEFT JOIN sas_requests ON sas_requests.student_id = users.id;
 END//
