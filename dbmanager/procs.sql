@@ -424,7 +424,7 @@ BEGIN
     COMMIT;
 END//
 
-DROP PROCEDURE IF EXISTS FindPresentStudents//
+DROP PROCEDURE IF EXISTS FindAllPresentStudents//
 CREATE PROCEDURE FindAllPresentStudents
 ()
 BEGIN
@@ -450,14 +450,13 @@ DROP PROCEDURE IF EXISTS AddStudentToSASClass//
 CREATE PROCEDURE AddStudentToSASClass
 (IN p_student_id INTEGER, IN p_teacher_id INTEGER)
 BEGIN
-    START TRANSACTION;
-
     DECLARE total INTEGER;
     DECLARE cap INTEGER;
 
+    START TRANSACTION;
     SELECT COUNT(*) INTO total FROM student_sas_classes
-    GROUP BY sas_teacher_id
-    WHERE sas_teacher_id = p_teacher_id;
+    WHERE sas_teacher_id = p_teacher_id
+    GROUP BY sas_teacher_id;
 
     SELECT student_cap INTO cap FROM sas_classes
     WHERE sas_teacher_id = p_teacher_id;
@@ -485,7 +484,7 @@ DROP PROCEDURE IF EXISTS FindAllStudentsForSorting//
 CREATE PROCEDURE FindAllStudentsForSorting
 ()
 BEGIN
-    SELECT users.id, sas_requests.teacher_id
+    SELECT users.id, sas_requests.sas_teacher_id
     FROM users
     LEFT JOIN sas_requests ON sas_requests.student_id = users.id;
 END//
