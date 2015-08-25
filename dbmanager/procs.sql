@@ -195,7 +195,7 @@ BEGIN
     START TRANSACTION;
     INSERT INTO users (name, email, type) VALUES(p_name, p_email, 'teacher');
     INSERT INTO sas_classes(teacher_id, room_num, student_cap)
-    VALUES(LAST_INSERT_ID(), p_room_num, 20);
+    VALUES(LAST_INSERT_ID(), p_room_num, 25);
     COMMIT;
 END//
 
