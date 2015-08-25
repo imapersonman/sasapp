@@ -4,6 +4,7 @@ var async = require("async");
 firstPass();
 
 function firstPass() {
+    console.log("FirstPass");
     var proc_name = "FindAllRequests";
     var a_proc_name = "AddStudentToSASClass";
     var a_query = "";
@@ -18,8 +19,9 @@ function firstPass() {
             })
             .on("result", function(row) {
                 var student_id = row.student_id;
-                var teacher_id = row.teacher_id;
-                if (deleted.indexOf(teacher_id) > -1 || row.rank != 0) {
+                var teacher_id = row.sas_teacher_id;
+                console.log("Student: " + student_id + ", Teacher: " + teacher_id);
+                if (row && row.rank != 0) {
                     var params = [student_id, teacher_id];
                     query_list.push(function(callback) {
                         helper.runProc(a_proc_name, params, callback);

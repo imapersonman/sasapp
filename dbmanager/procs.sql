@@ -459,7 +459,7 @@ BEGIN
     GROUP BY sas_teacher_id;
 
     SELECT student_cap INTO cap FROM sas_classes
-    WHERE sas_teacher_id = p_teacher_id;
+    WHERE teacher_id = p_teacher_id;
 
     IF total < cap THEN
         UPDATE student_sas_classes SET sas_teacher_id = p_teacher_id
