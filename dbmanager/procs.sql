@@ -182,6 +182,8 @@ BEGIN
     START TRANSACTION;
     INSERT INTO users (name, email, type)
     VALUES(p_name, p_email, 'student');
+    INSERT INTO student_sas_classes (student_id)
+    VALUES(LAST_INSERT_ID);
     COMMIT;
 END//
 
@@ -461,8 +463,8 @@ BEGIN
     WHERE sas_teacher_id = p_teacher_id;
 
     IF total < cap THEN
-        INSERT INTO student_sas_classes (sas_teacher_id, student_id)
-        VALUES (p_teacher_id, p_student_id);
+        UPDATE student_sas_classes SET sas_teacher_id = p_teacher_id
+        WHERE student_id = p_student_id;
         DELETE FROM sas_requests WHERE student_id = p_student_id;
     ELSE
         DELETE FROM sas_requests WHERE sas_teacher_id = p_teacher_id;
@@ -471,27 +473,21 @@ BEGIN
     COMMIT;
 END//
 
-DROP PROCEDURE IF EXISTS FillOpenClasses//
-CREATE PROCEDURE FillOpenClasses
+DROP PROCEDURE IF EXISTS FindFreeStudents//
+CREATE PROCEDURE FindFreeStudents
 ()
 BEGIN
-    DECLARE done BOOLEAN DEFAULT 0;
-    DECLARE open_classes CURSOR FOR
-    SELECT teacher_id FROM sas_classes WHERE (
-        SELECT sas_teacher_id, COUNT(*) FROM student_sas_classes
-        GROUP BY sas_teacher_id;
-    ) < student_cap;
-    DECLARE CONTINUE HANDLER FOR NOT FOUND SET done = 1;
-    OPEN open_classes;
+    SELECT student_id AS id FROM student_sas_classes
+    WHERE sas_teacher_id = NULL;
+END//
 
-    WHILE done != 1 DO
-        DECLARE s_id INTEGER;
-        FETCH open_classes INTO t_id;
-
-        SET s_id = (SELECT users.id FROM users WHERE NOT IN (
-            SELECT student_id FROM student_sas_classes
-        ) LIMIT 1);
-    
-END;
+DROP PROCEDURE IF EXISTS FindAllStudentsForSorting//
+CREATE PROCEDURE FindAllStudentsForSorting
+()
+BEGIN
+    SELECT users.id, sas_requests.teacher_id
+    FROM users
+    LEFT JOIN sas_requests ON sas_requests.student_id = users.id;
+END//
 
 DELIMITER ;

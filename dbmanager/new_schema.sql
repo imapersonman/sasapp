@@ -47,6 +47,7 @@ CREATE TABLE `sas_classes` (
 	`room_num` varchar(16) NOT NULL,
 	`student_cap` INT,
 	`taken` BOOLEAN NOT NULL DEFAULT '0',
+	`student_count` INT NOT NULL DEFAULT '0',
 	`deleted` BOOLEAN NOT NULL DEFAULT '0'
 );
 
