@@ -465,6 +465,8 @@ BEGIN
         UPDATE student_sas_classes SET sas_teacher_id = p_teacher_id
         WHERE student_id = p_student_id;
         DELETE FROM sas_requests WHERE student_id = p_student_id;
+        UPDATE sas_classes SET student_count = student_count + 1
+        WHERE teacher_id = p_teacher_id;
     ELSE
         DELETE FROM sas_requests WHERE sas_teacher_id = p_teacher_id;
     END IF;
@@ -487,6 +489,32 @@ BEGIN
     SELECT users.id, sas_requests.sas_teacher_id, sas_requests.rank
     FROM users
     LEFT JOIN sas_requests ON sas_requests.student_id = users.id;
+END//
+
+DROP PROCEDURE IF EXISTS FinishAssignment//
+CREATE PROCEDURE FinishAssignment
+()
+BEGIN
+    DECLARE id INTEGER;
+    DECLARE t_id INTEGER;
+    DECLARE done BOOLEAN DEFAULT 0;
+    DECLARE students CURSOR FOR
+    SELECT student_id FROM student_sas_classes
+    WHERE sas_teacher_id = NULL;
+    DECLARE CONTINUE HANDLER FOR NOT FOUND SET done = 1;
+
+    OPEN students;
+
+    WHILE done != 1 DO
+        FETCH students INTO id;
+        
+        SET t_id = (SELECT teacher_id FROM sas_classes WHERE
+            student_count < student_cap LIMIT 1);
+
+        CALL AddStudentToSASClass(id, t_id);
+    END WHILE;
+
+    CLOSE students;
 END//
 
 DELIMITER ;

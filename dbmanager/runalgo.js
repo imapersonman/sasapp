@@ -3,38 +3,11 @@ var async = require("async");
 
 firstPass();
 
-/*
-function getRequests() {
-    var proc_name = "FindAllRequests";
-    helper.runProc(proc_name, [], function(error, results) {
-        sortRequests(results);
-    });
-}
-
-function sortRequests(requests) {
-    var proc_name = "AddStudentToSASClass";
-    var query = "";
-    for (var r = 0; r < something else; r++) {
-        var request = requests[r];
-        console.log("Request: " + request);
-        var student_id = request.student_id;
-        var teacher_id = request.sas_teacher_id;
-        var params = [student_id, teacher_id];
-        if (request.rank == 0) continue;
-        query += helper.buildProcQuery(proc_name, params);
-        requests.filter(function(element, index, array) {
-            var s_id = element.student_id;
-            return (s_id != student_id);
-        });
-    }
-}
-
 function firstPass() {
     var proc_name = "FindAllRequests";
     var a_proc_name = "AddStudentToSASClass";
     var a_query = "";
     var query = helper.buildProcQuery(proc_name, []);
-    // I FORGOT CAPS!
     helper.pool.getConnection(function(error, connection) {
         helper.processError(error);
         var r_query = connection.query(query);
@@ -63,29 +36,8 @@ function firstPass() {
 }
 
 function secondPass() {
-    var s_proc_name = "FindFreeStudents";
-    var t_proc_name = "FindFreeSASClasses";
-    helper.runProc(t_proc_name, [], function(error, results) {
-        var teachers = results;
-        helper.runProc(s_proc_name, [], function(error, results) {
-            var students = results;
-            for (var s = 0; s < students.length; s++) {
-                var student = students[s];
-                do {
-                    var teacher 
-                } while(1);
-            }
-        });
-    });
-}
-*/
-
-function firstPass() {
-    var s_proc_name = "FindAllStudentsForSorting";
-    helper.runProc(s_proc_name, [], function(error, results) {
-        for (var r = 0; r < 100; r++) {
-            console.log("Result: " + JSON.stringify(results[r]));
-        }
+    var proc_name = "FinishAssignment";
+    helper.runProc(proc_name, params, function(error, results) {
         finish();
     });
 }
