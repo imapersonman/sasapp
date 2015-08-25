@@ -444,4 +444,54 @@ BEGIN
     AND student_sas_classes.sas_teacher_id = p_teacher_id;
 END//
 
+DROP PROCEDURE IF EXISTS AddStudentToSASClass//
+CREATE PROCEDURE AddStudentToSASClass
+(IN p_student_id INTEGER, IN p_teacher_id INTEGER)
+BEGIN
+    START TRANSACTION;
+
+    DECLARE total INTEGER;
+    DECLARE cap INTEGER;
+
+    SELECT COUNT(*) INTO total FROM student_sas_classes
+    GROUP BY sas_teacher_id
+    WHERE sas_teacher_id = p_teacher_id;
+
+    SELECT student_cap INTO cap FROM sas_classes
+    WHERE sas_teacher_id = p_teacher_id;
+
+    IF total < cap THEN
+        INSERT INTO student_sas_classes (sas_teacher_id, student_id)
+        VALUES (p_teacher_id, p_student_id);
+        DELETE FROM sas_requests WHERE student_id = p_student_id;
+    ELSE
+        DELETE FROM sas_requests WHERE sas_teacher_id = p_teacher_id;
+    END IF;
+
+    COMMIT;
+END//
+
+DROP PROCEDURE IF EXISTS FillOpenClasses//
+CREATE PROCEDURE FillOpenClasses
+()
+BEGIN
+    DECLARE done BOOLEAN DEFAULT 0;
+    DECLARE open_classes CURSOR FOR
+    SELECT teacher_id FROM sas_classes WHERE (
+        SELECT sas_teacher_id, COUNT(*) FROM student_sas_classes
+        GROUP BY sas_teacher_id;
+    ) < student_cap;
+    DECLARE CONTINUE HANDLER FOR NOT FOUND SET done = 1;
+    OPEN open_classes;
+
+    WHILE done != 1 DO
+        DECLARE s_id INTEGER;
+        FETCH open_classes INTO t_id;
+
+        SET s_id = (SELECT users.id FROM users WHERE NOT IN (
+            SELECT student_id FROM student_sas_classes
+        ) LIMIT 1);
+    
+END;
+
 DELIMITER ;

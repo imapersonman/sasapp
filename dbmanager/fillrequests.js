@@ -1,4 +1,4 @@
-var helper = require("../app/model_helpers.js");
+var helper = require("../app/model_helpers");
 
 const P_TEACHER_REQ = 0.005;
 const P_STUDENT_REQ = 0.75;

@@ -51,8 +51,8 @@ CREATE TABLE `sas_classes` (
 );
 
 CREATE TABLE `student_sas_classes` (
-	`sas_teacher_id` INT NOT NULL,
 	`student_id` INT NOT NULL,
+	`sas_teacher_id` INT,
 	`present` BOOLEAN NOT NULL DEFAULT '0',
 	`deleted` BOOLEAN NOT NULL DEFAULT '0'
 );
@@ -71,7 +71,7 @@ ALTER TABLE `student_classes` ADD CONSTRAINT `student_classes_fk1` FOREIGN KEY (
 
 ALTER TABLE `sas_classes` ADD CONSTRAINT `sas_classes_fk0` FOREIGN KEY (`teacher_id`) REFERENCES `users`(`id`);
 
-ALTER TABLE `student_sas_classes` ADD CONSTRAINT `student_sas_classes_fk0` FOREIGN KEY (`sas_teacher_id`) REFERENCES `users`(`id`);
+ALTER TABLE `student_sas_classes` ADD CONSTRAINT `student_sas_classes_fk0` FOREIGN KEY (`student_id`) REFERENCES `users`(`id`);
 
-ALTER TABLE `student_sas_classes` ADD CONSTRAINT `student_sas_classes_fk1` FOREIGN KEY (`student_id`) REFERENCES `users`(`id`);
+ALTER TABLE `student_sas_classes` ADD CONSTRAINT `student_sas_classes_fk1` FOREIGN KEY (`sas_teacher_id`) REFERENCES `users`(`id`);
 

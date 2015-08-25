@@ -241,3 +241,5 @@ exports.buildMultiStatementQuery = function(queries) {
     }
     return query;
 };
+
+exports.pool = pool;
