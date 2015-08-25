@@ -83,9 +83,10 @@ function secondPass() {
 function firstPass() {
     var s_proc_name = "FindAllStudentsForSorting";
     helper.runProc(s_proc_name, [], function(error, results) {
-        for (var r = 0; r < 10; r++) {
+        for (var r = 0; r < 100; r++) {
             console.log("Result: " + JSON.stringify(results[r]));
         }
+        finish();
     });
 }
 
