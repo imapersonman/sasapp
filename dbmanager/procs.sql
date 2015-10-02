@@ -1,3 +1,5 @@
+use sasapp;
+
 DELIMITER //
 
 DROP PROCEDURE IF EXISTS FindUserForGoogle//
