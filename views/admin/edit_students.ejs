@@ -1,5 +1,13 @@
-<script src="/static/js/edit_students.js"></script>
+<script src="/static/js/edit.js"></script>
 <script>setInitialRowSize(<%- students.length - 1 %>)</script>
+
+<div id="row-template">
+    <div field="name"><input class="form-control" type="text" value="Name"></div>
+    <div field="email"><input class="form-control" type="text" value="Email"></div>
+    <div field="room_num">Room Number</div>
+    <div field="school">School</div>
+</div>
+
 <div class="panel panel-default scrollable">
     <table class="table table-striped table-condensed table-hover">
         <thead>
@@ -7,16 +15,18 @@
                 <th>Name</th>
                 <th>Email</th>
                 <th>SAS Room Number</th>
+                <th>School</th>
             </tr>
         </thead>
         <tbody class="editable-list">
             <% for(var s = 0; s < students.length; s++) { %>
-            <tr user_id=<%= students[s].id %> row_index=<%= s %>>
+            <tr id=<%= students[s].id %> row_index=<%= s %>>
                 <td><input class="form-control" type="text" value=<%- "'" + students[s].name + "'" %>></td>
                 <td><input class="form-control" type="text" value=<%= students[s].email %>></td>
                 <td><%= students[s].room_num %></td>
+                <td><%= students[s].school_name %></td>
                 <td>
-                    <button onclick="removeRow()" style="float: right" type="button" class="btn btn-default btn-sm">
+                    <button onclick="removeRow(this)" style="float: right" type="button" class="btn btn-default btn-sm">
                         <span class="glyphicon glyphicon-minus"></span> Remove
                     </button>
                 </td>
@@ -30,6 +40,6 @@
     <span class="glyphicon glyphicon-plus"></span> Add
 </button>
 
-<button style="float: right" onclick="sendStudentChanges()" type="button" class="btn btn-success btn-sm" >
+<button style="float: right" onclick="sendChanges('students', '/user/students')" type="button" class="btn btn-success btn-sm" >
     <span class="glyphicon glyphicon-check"></span> Done
 </button>

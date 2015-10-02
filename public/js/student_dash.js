@@ -1,17 +1,11 @@
-function getTeachers(student_id) {
-    var post_object = {
-        student_id: student_id
-    };
-    $.post("/model/find/student_classes", post_object, function(data, status) {
+function getTeachers() {
+    $.post("/model/find/student_classes", function(data, status) {
         renderTeachers(JSON.parse(data));
     });
 }
 
-function getRankings(student_id) {
-    var post_object = {
-        student_id: student_id
-    };
-    $.post("/model/find/rankings", post_object, function(data, status) {
+function getRankings() {
+    $.post("/model/find/student/rankings", function(data, status) {
         renderRankings(JSON.parse(data));
     });
 }
@@ -25,7 +19,7 @@ function renderTeachers(teachers) {
     console.log("Length: " + teachers.length)
     for (var t = 0; t < teachers.length; t++) {
         $("tbody#teacher-list").append(""
-            + "<tr st_id=" + teachers[t].st_id + ">"
+            + "<tr t_id=" + teachers[t].id + ">"
             + "<td>"
             + "<select class=\"rank-list\">"
             + options
@@ -52,10 +46,11 @@ function sendRanks() {
     $('#loading-indicator').show();
     var class_ranks = [];
     $(".rank-list").each(function() {
-        var st_id = $(this).parentsUntil("tbody").last().attr("st_id");
+        var teacher_id = $(this).parentsUntil("tbody").last().attr("t_id");
+        console.log("Teacher ID: " + teacher_id);
         var rank = $(this).find(":selected").val();
         class_ranks.push({
-            st_id: st_id,
+            teacher_id: teacher_id,
             rank: (rank != "") ? rank : 0
         });
     });

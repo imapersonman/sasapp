@@ -2,7 +2,7 @@ function addStudents(class_id) {
     var selected = $("#all-students input[type='checkbox']:checked");
     var ids = [];
     for (var s = 0; s < selected.length; s++) {
-        var id = $(selected[s]).parentsUntil("tbody").last().attr("user_id");
+        var id = $(selected[s]).parentsUntil("tbody").last().attr("id");
         id = parseInt(id);
         ids.push(id);
     }
@@ -19,7 +19,7 @@ function removeStudents(class_id) {
     var selected = $("#class-students input[type='checkbox']:checked");
     var ids = [];
     for (var s = 0; s < selected.length; s++) {
-        var id = $(selected[s]).parentsUntil("tbody").last().attr("user_id");
+        var id = $(selected[s]).parentsUntil("tbody").last().attr("id");
         id = parseInt(id);
         ids.push(id);
     }

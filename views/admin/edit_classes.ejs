@@ -1,5 +1,15 @@
-<script src="/static/js/edit_classes.js"></script>
+<script src="/static/js/edit.js"></script>
 <script>setInitialRowSize(<%- classes.length - 1 %>)</script>
+
+<!-- Defining the row template -->
+<div id="row-template">
+    <div>Teacher</div>
+    <div field="name"><input class="form-control" type="text" value="Name"></div>
+    <div field="room_num"><input class="form-control" type="text" value="Room Number"></div>
+    <div field="period"><input class="form-control" type="text" value="Period"></div>
+</div>
+<!-- End -->
+
 <div class="panel panel-default scrollable">
     <table class="table table-striped table-condensed table-hover">
         <thead>
@@ -12,11 +22,11 @@
         </thead>
         <tbody class="editable-list">
             <% for(var c = 0; c < classes.length; c++) { %>
-            <tr class_id=<%= classes[c].id %> row_index=<%= c %>>
+            <tr id=<%= classes[c].id %> row_index=<%= c %>>
                 <td><%= classes[c].teacher_name %></td>
-                <td><input class="form-control" type="text" value=<%- "'" + classes[c].name + "'" %>></td>
-                <td><input class="form-control" type="text" value=<%= classes[c].period %>></td>
-                <td><input class="form-control" type="text" value=<%= classes[c].room_num %>></td>
+                <td field="name"><input class="form-control" type="text" value=<%- "'" + classes[c].name + "'" %>></td>
+                <td field="room_num"><input class="form-control" type="text" value=<%= classes[c].room_num %>></td>
+                <td field="period"><input class="form-control" type="text" value=<%= classes[c].period %>></td>
                 <td>
                     <button onclick="removeRow(this)" style="float: right" type="button" class="btn btn-default btn-sm">
                         <span class="glyphicon glyphicon-minus"></span> Remove
@@ -32,6 +42,6 @@
     <span class="glyphicon glyphicon-plus"></span> Add
 </button>
 
-<button style="float: right" onclick="sendClassChanges()" type="button" class="btn btn-success btn-sm" >
+<button style="float: right" onclick="sendChanges('classes', '/user/classes')" type="button" class="btn btn-success btn-sm" >
     <span class="glyphicon glyphicon-check"></span> Done
 </button>

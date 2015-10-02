@@ -10,11 +10,11 @@
         </thead>
         <tbody>
             <% for(var c = 0; c < classes.length; c++) { %>
-            <tr data-href=<%= "/user/classes/" + classes[c].id %>>
-                <td><%= classes[c].teacher_name %></td>
-                <td><%= classes[c].name %></td>
-                <td><%= classes[c].room_num %></td>
-                <td><%= classes[c].period %></td>
+            <tr data-href=<%= "/user/classes/edit/" + classes[c].id %>>
+                <td field="teacher"><%= classes[c].teacher_name %></td>
+                <td field="name"><%= classes[c].name %></td>
+                <td field="room_num"><%= classes[c].room_num %></td>
+                <td field="period"><%= classes[c].period %></td>
             </tr>
             </a>
             <% } %>

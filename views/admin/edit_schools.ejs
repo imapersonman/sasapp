@@ -1,0 +1,39 @@
+<script src="/static/js/edit.js"></script>
+<script>setInitialRowSize(<%- schools.length - 1 %>)</script>
+
+<div id="row-template">
+    <div field="name"><input class="form-control" type="text" value="Name"></div>
+    <div field="sas_name"><input class="form-control" type="text" value="SAS Name"></div>
+</div>
+
+<div class="panel panel-default scrollable">
+    <table class="table table-striped table-condensed table-hover">
+        <thead>
+            <tr>
+                <th>Name</th>
+                <th>SAS Name</th>
+            </tr>
+        </thead>
+        <tbody class="editable-list">
+            <% for(var c = 0; c < schools.length; c++) { %>
+            <tr id=<%= schools[c].id %> row_index=<%= c %>>
+                <td field="name"><input class="form-control" type="text" value=<%- "'" +  schools[c].name + "'" %>></td>
+                <td field="sas_name"><input class="form-control" type="text" value=<%- "'" + schools[c].sas_name + "'" %>></td>
+                <td>
+                    <button onclick="removeRow(this)" style="float: right" type="button" class="btn btn-default btn-sm">
+                        <span class="glyphicon glyphicon-minus"></span> Remove
+                    </button>
+                </td>
+            </tr>
+            <% } %>
+        </tbody>
+    </table>
+</div>
+
+<button onclick="addRow()" type="button" class="btn btn-default btn-sm">
+    <span class="glyphicon glyphicon-plus"></span> Add
+</button>
+
+<button style="float: right" onclick="sendChanges('schools', '/user/schools')" type="button" class="btn btn-success btn-sm" >
+    <span class="glyphicon glyphicon-check"></span> Done
+</button>
