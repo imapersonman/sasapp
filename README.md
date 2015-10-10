@@ -41,12 +41,11 @@ mysql> GRANT EXECUTE ON sasapp.* TO 'dev'@'localhost';
 mysql> quit
 ```
 The above commands:
-1. Created a database called 'sasapp'
-2. Created a user called 'dev' at 'localhost' with the password 'devpassword'
-    - This, as the name implies, is the developer account for sasapp.  It is a good
+
+*  Created a database called 'sasapp'
+* Created a user called 'dev' at 'localhost' with the password 'devpassword'.  This, as the name implies, is the developer account for sasapp.  It is a good
 idea to keep the credentials the same across environments to simplify setup.  This is NOT secure and should NEVER be used in a production environment.
-3. Gave 'dev' access to the 'CREATE', 'ALTER', 'REFERENCE', and 'EXECUTE' commands.
-    - Only the 'EXECUTE' command should be necessary for a production account.  Not sure though.
+* Gave 'dev' access to the 'CREATE', 'ALTER', 'REFERENCE', and 'EXECUTE' commands.  Only the 'EXECUTE' command should be necessary for a production account.  Not sure though.
 
 The directions for interfacing with MySQL through a GUI depend on the client you are using, although it should be trivial to translate the directions from the command line to the GUI.
 
