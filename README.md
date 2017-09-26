@@ -64,9 +64,6 @@ $ mysql -u root -p sasapp < dbmanager/procs.sql
 Enter password: <don't stop doing what it says>
 ...
 ```
-`<your name>` can really be anything you want, but `<your email>` has to be a valid google email, preferably one you have access to.  'admin' is the role of the user.  The other user roles are 'student' and 'teacher'.
-
-At this point you \*should\* have a working sasapp server, accessable by running `node app` when in the root directory and navigating to 'localhost:3000' in your browser.  There, you will see a login button, which takes you to the google login page.  In order to link your google account with sasapp:
 ```
 $ mysql -u root -p
 Enter password: <you know what to do>
@@ -75,6 +72,9 @@ mysql> use sasapp
 mysql> INSERT INTO users (name, email, type) VALUES ('<your name>', '<your google email>' 'admin');
 mysql> quit
 ```
+`<your name>` can really be anything you want, but `<your email>` has to be a valid google email, preferably one you have access to.  'admin' is the role of the user.  The other user roles are 'student' and 'teacher'.
+
+At this point you \*should\* have a working sasapp server, accessable by running `node app` when in the root directory and navigating to 'localhost:3000' in your browser.  There, you will see a login button, which takes you to the google login page.  In order to link your google account with sasapp:
 
 ## Running sasapp
 
